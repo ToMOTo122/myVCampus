@@ -32,7 +32,7 @@ public class MenuController {
                 button.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
                     String menuText = (String) button.getUserData();
                     if (mainApp != null) {
-                        mainApp.showModule(menuText); // 调用主应用程序的方法
+                        mainApp.handleMenuClick(menuText); // 调用主应用程序的方法
                     }
                 });
             }

@@ -27,6 +27,10 @@ public class Course implements Serializable {
     private LocalDateTime createTime; // 创建时间
     private LocalDateTime updateTime; // 更新时间
 
+    private String className; //在线课程功能
+    private String startDate; //在线课程功能
+    private String endDate;   //在线课程功能
+
     // 构造函数
     public Course() {
         this.createTime = LocalDateTime.now();
@@ -48,6 +52,17 @@ public class Course implements Serializable {
         this.classroom = classroom;
         this.semester = semester;
     }
+
+    public Course(String courseName, String className, String teacherName, String startDate, String endDate, String status, int credits) {
+        this.courseName = courseName;
+        this.className = className;
+        this.teacherName = teacherName;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+        this.credits = credits;
+    }
+
 
     // Getter 和 Setter 方法
     public String getCourseId() {
@@ -178,6 +193,18 @@ public class Course implements Serializable {
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
+
+    public String getClassName() { return className; }
+
+    public void setClassName(String className) { this.className = className; }
+
+    public String getStartDate() { return startDate; }
+
+    public void setStartDate(String startDate) { this.startDate = startDate; }
+
+    public String getEndDate() { return endDate; }
+
+    public void setEndDate(String endDate) { this.endDate = endDate; }
 
     /**
      * 根据选课人数自动更新状态

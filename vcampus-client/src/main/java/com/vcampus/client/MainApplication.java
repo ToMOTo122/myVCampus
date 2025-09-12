@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+
 import com.vcampus.common.entity.User;
 import com.vcampus.client.service.ClientService;
 import com.vcampus.client.ui.AcademicSystemPanel;
@@ -156,6 +157,7 @@ public class MainApplication extends Application {
                     createMenuButton("空间预约", "🏢"),
                     createMenuButton("成绩查询", "📊"),
                     createMenuButton("图书馆", "📖"),
+                    createMenuButton("在线课堂", "👆"),
                     createMenuButton("校园商店", "🛒")
             );
         } else if (currentUser.isTeacher()) {
@@ -165,6 +167,7 @@ public class MainApplication extends Application {
                     createMenuButton("课程管理", "📚"),
                     createMenuButton("空间预约", "🏢"),
                     createMenuButton("成绩管理", "📊"),
+                    createMenuButton("在线课堂", "👆"),
                     createMenuButton("学生管理", "👥"),
                     createMenuButton("校园商店", "🛒"),
                     createMenuButton("图书馆", "📖")
@@ -177,6 +180,7 @@ public class MainApplication extends Application {
                     createMenuButton("教师管理", "👨‍🏫"),
                     createMenuButton("课程管理", "📚"),
                     createMenuButton("空间预约", "🏢"),
+                    createMenuButton("在线课堂", "👆"),
                     createMenuButton("图书管理", "📖"),
                     createMenuButton("商店管理", "🛒"),
                     createMenuButton("系统设置", "⚙️")
@@ -461,7 +465,7 @@ public class MainApplication extends Application {
     /**
      * 处理菜单点击
      */
-    private void handleMenuClick(String menuText) {
+    public void handleMenuClick(String menuText) {
         switch (menuText) {
             case "教务系统":
                 // 显示教务系统面板
@@ -500,7 +504,26 @@ public class MainApplication extends Application {
 
             case "图书馆":
             case "图书管理":
-                showLibraryManagement();
+                System.out.println("正在加载图书馆系统...");
+                try {
+                    // 不要手动创建控制器实例
+                    javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader();
+                    loader.setLocation(getClass().getResource("/view/BookList.fxml"));
+
+                    javafx.scene.Parent bookPane = loader.load();
+
+                    // 如果需要设置ClientService，从加载器获取控制器
+                    BookListController bookController = loader.getController();
+                    bookController.setClientService(clientService);
+
+                    centerArea.getChildren().clear();
+                    centerArea.getChildren().add(bookPane);
+
+                    System.out.println("图书馆界面加载完成");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showAlert("错误", "加载图书馆界面失败: " + e.getMessage());
+                }
                 break;
 
             case "校园商店":
@@ -524,11 +547,34 @@ public class MainApplication extends Application {
                 showSystemSettings();
                 break;
 
+            case "在线课堂":
+                System.out.println("正在加载在线课堂系统...");
+                centerArea.getChildren().clear();
+                if (currentUser.isStudent()) {
+                    StudentOnlineClass studentOnlineClass = new StudentOnlineClass(currentUser);
+                    centerArea.getChildren().add(studentOnlineClass);
+                } else if (currentUser.isTeacher()) {
+                    TeacherOnlineClass teacherOnlineClass = new TeacherOnlineClass();
+                    centerArea.getChildren().add(teacherOnlineClass);
+                }
+                break;
+
             default:
                 // 其他功能暂时显示占位符
                 showPlaceholder(menuText);
                 break;
         }
+    }
+
+    /**
+     * 显示警告对话框
+     */
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     /**

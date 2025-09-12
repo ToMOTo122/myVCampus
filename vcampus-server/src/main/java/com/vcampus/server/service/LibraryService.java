@@ -205,7 +205,7 @@ public class LibraryService {
 
     // --- 管理员功能 ---
     private Message handleAddBook(Message message, User currentUser) {
-        if (!"admin".equals(currentUser.getUserType())) {
+        if (!"ADMIN".equals(currentUser.getRole())) {
             return Message.error("权限不足");
         }
         Book newBook = (Book) message.getData();
@@ -226,7 +226,7 @@ public class LibraryService {
     }
 
     private Message handleDeleteBook(Message message, User currentUser) {
-        if (!"admin".equals(currentUser.getUserType())) {
+        if (!"ADMIN".equals(currentUser.getRole())) {
             return Message.error("权限不足");
         }
         String bookId = (String) message.getData();
@@ -242,7 +242,7 @@ public class LibraryService {
     }
 
     private Message handleUpdateBook(Message message, User currentUser) {
-        if (!"admin".equals(currentUser.getUserType())) {
+        if (!"ADMIN".equals(currentUser.getRole())) {
             return Message.error("权限不足");
         }
         Book updatedBook = (Book) message.getData();

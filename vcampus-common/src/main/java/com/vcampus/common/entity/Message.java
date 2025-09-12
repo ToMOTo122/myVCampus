@@ -70,7 +70,7 @@ public class Message implements Serializable {
         // 响应类型
         SUCCESS,
         ERROR,
-        ANNOUNCEMENT_PUBLISH, FILE_DELETE, DATA
+        ANNOUNCEMENT_PUBLISH, FILE_DELETE, BOOK_RENEW, BOOK_ADD, BOOK_DELETE, BOOK_UPDATE, BORROW_RECORD_LIST, DATA
     }
 
     // 状态码枚举

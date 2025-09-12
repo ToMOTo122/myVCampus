@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox fx:controller="com.vcampus.client.controller.BookListController"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="mainVBox"
+      stylesheets="@../css/library.css"
+      styleClass="main-container">
+
+    <VBox alignment="CENTER" styleClass="header-container">
+        <Label text="📚 VCampus 图书馆" styleClass="header-title" />
+        <Label text="探索知识的海洋，开启学习的旅程" styleClass="header-subtitle" />
+    </VBox>
+
+    <TabPane fx:id="libraryTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" styleClass="tab-container">
+
+        <Tab text="📖 图书列表">
+            <VBox spacing="20.0" styleClass="tab-content-vbox">
+                <padding>
+                    <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                </padding>
+
+                <HBox alignment="CENTER_LEFT" spacing="15" styleClass="search-container">
+                    <TextField fx:id="searchField" promptText="请输入书名、作者或关键词搜索..." styleClass="search-input" HBox.hgrow="ALWAYS" />
+                    <Button fx:id="searchButton" text="🔍 搜索图书" styleClass="btn-primary" />
+                    <Button fx:id="refreshButton" text="🔄 刷新" styleClass="btn-secondary" />
+                </HBox>
+
+                <GridPane fx:id="statsGrid" hgap="20" vgap="20" styleClass="stats-grid">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                    </columnConstraints>
+                    <VBox styleClass="stat-card" GridPane.columnIndex="0">
+                        <Label fx:id="totalBooksLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="馆藏图书" />
+                    </VBox>
+                    <VBox styleClass="stat-card" GridPane.columnIndex="1">
+                        <Label fx:id="availableBooksLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="可借图书" />
+                    </VBox>
+                    <VBox styleClass="stat-card" GridPane.columnIndex="2">
+                        <Label fx:id="borrowedBooksLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="已借出" />
+                    </VBox>
+                    <VBox styleClass="stat-card" GridPane.columnIndex="3">
+                        <Label fx:id="newBooksLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="本月新增" />
+                    </VBox>
+                </GridPane>
+
+                <TableView fx:id="booksTableView" VBox.vgrow="ALWAYS" styleClass="custom-table-view">
+                    <columns>
+                        <TableColumn fx:id="bookIdCol" prefWidth="80.0" text="图书ID" />
+                        <TableColumn fx:id="titleCol" prefWidth="250.0" text="书名" />
+                        <TableColumn fx:id="authorCol" prefWidth="150.0" text="作者" />
+                        <TableColumn fx:id="publisherCol" prefWidth="150.0" text="出版社" />
+                        <TableColumn fx:id="statusCol" prefWidth="100.0" text="状态" />
+                        <TableColumn fx:id="stockCol" prefWidth="60.0" text="库存" />
+                        <TableColumn fx:id="actionCol" prefWidth="150.0" text="操作" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <Tab text="📋 个人借阅">
+            <VBox spacing="20" styleClass="tab-content-vbox">
+                <padding>
+                    <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                </padding>
+                <Label styleClass="section-title" text="📋 我的借阅记录" />
+                <GridPane hgap="20" vgap="20" styleClass="stats-grid">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                    </columnConstraints>
+                    <VBox styleClass="stat-card" GridPane.columnIndex="0">
+                        <Label fx:id="currentBorrowLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="当前借阅" />
+                    </VBox>
+                    <VBox styleClass="stat-card" GridPane.columnIndex="1">
+                        <Label fx:id="historyBorrowLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="历史借阅" />
+                    </VBox>
+                    <VBox styleClass="stat-card" GridPane.columnIndex="2">
+                        <Label fx:id="expiringBooksLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="即将到期" />
+                    </VBox>
+                    <VBox styleClass="stat-card" GridPane.columnIndex="3">
+                        <Label fx:id="overdueBooksLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="逾期图书" />
+                    </VBox>
+                </GridPane>
+                <TableView fx:id="borrowHistoryTable" VBox.vgrow="ALWAYS" styleClass="custom-table-view">
+                    <columns>
+                        <TableColumn fx:id="borrowIdCol" prefWidth="80.0" text="借阅ID" />
+                        <TableColumn fx:id="borrowTitleCol" prefWidth="250.0" text="书名" />
+                        <TableColumn fx:id="borrowDateCol" prefWidth="150.0" text="借阅日期" />
+                        <TableColumn fx:id="returnDateCol" prefWidth="150.0" text="应还日期" />
+                        <TableColumn fx:id="borrowStatusCol" prefWidth="100.0" text="状态" />
+                        <TableColumn fx:id="borrowActionCol" prefWidth="150.0" text="操作" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <Tab text="🎯 图书馆活动">
+            <HBox spacing="30.0" styleClass="tab-content-hbox">
+                <padding>
+                    <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                </padding>
+                <VBox spacing="10" HBox.hgrow="SOMETIMES" styleClass="activity-sidebar">
+                    <Label styleClass="section-title" text="最新活动" />
+                    <ListView fx:id="activityListView" VBox.vgrow="ALWAYS" />
+                </VBox>
+                <VBox spacing="15" HBox.hgrow="ALWAYS" styleClass="activity-detail-container">
+                    <Label fx:id="activityTitleLabel" styleClass="activity-title" />
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="activity-meta">
+                        <Label text="📅" styleClass="icon-label" />
+                        <Label fx:id="activityDateLabel" styleClass="activity-date" />
+                        <Label text="📍" styleClass="icon-label" />
+                        <Label fx:id="activityLocationLabel" styleClass="activity-location" />
+                    </HBox>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="activity-scroll-pane">
+                        <Text fx:id="activityContentText" styleClass="activity-content" wrappingWidth="600" />
+                    </ScrollPane>
+                </VBox>
+            </HBox>
+        </Tab>
+
+        <Tab text="🔍 文献查阅">
+            <VBox styleClass="tab-content-vbox">
+                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="literature-header-container">
+                    <Label styleClass="section-title" text="学术资源库" />
+                    <Label styleClass="section-subtitle" text="探索前沿学术文献，助力您的研究之路" />
+                    <HBox HBox.hgrow="ALWAYS" />
+                    <TextField fx:id="literatureSearchField" promptText="请输入文献关键词..." styleClass="search-input" prefWidth="350" />
+                    <Button fx:id="literatureSearchButton" text="搜索文献" styleClass="search-button" />
+                </HBox>
+
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="literature-scroll-pane">
+                    <VBox fx:id="literatureListVBox" spacing="20.0" styleClass="literature-list" />
+                </ScrollPane>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+</VBox>
