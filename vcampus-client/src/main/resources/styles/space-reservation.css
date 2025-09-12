@@ -1,0 +1,153 @@
+/* 空间预约系统样式 */
+
+.space-reservation-root {
+    -fx-background-color: #f8f9fa;
+}
+
+/* 顶部标题栏 */
+.space-header-bar {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-border-color: rgba(52, 73, 94, 0.1);
+    -fx-border-width: 0 0 2 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.space-header-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.space-time-label {
+    -fx-text-fill: #7f8c8d;
+}
+
+/* 左侧导航栏 */
+.space-left-nav {
+    -fx-background-color: rgba(52, 73, 94, 0.95);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0 1 0 0;
+}
+
+.space-nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.space-nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: white;
+}
+
+.space-nav-button.active {
+    -fx-background-color: rgba(103, 126, 234, 0.4);
+    -fx-text-fill: white;
+}
+
+.space-sub-nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.space-sub-nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+}
+
+/* 中间内容区域 */
+.space-center-content {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-border-color: rgba(52, 73, 94, 0.1);
+    -fx-border-width: 0 1 0 0;
+}
+
+.space-content-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.space-announcement-card {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: rgba(52, 73, 94, 0.1);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.space-announcement-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-background-color: rgba(103, 126, 234, 0.02);
+}
+
+.space-announcement-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.space-announcement-date {
+    -fx-text-fill: #95a5a6;
+}
+
+/* 右侧仪表盘 */
+.space-right-dashboard {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+}
+
+.space-dashboard-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.space-stat-card {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: rgba(52, 73, 94, 0.1);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.space-stat-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);
+    -fx-background-color: rgba(103, 126, 234, 0.02);
+}
+
+.space-stat-title {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-weight: bold;
+}
+
+.space-stat-count {
+    -fx-font-weight: bold;
+}
+
+.space-quick-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.space-quick-button {
+    -fx-background-color: rgba(103, 126, 234, 0.9);
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.space-quick-button:hover {
+    -fx-background-color: rgba(103, 126, 234, 1.0);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);
+}
+
+.space-quick-button:pressed {
+    -fx-background-color: rgba(103, 126, 234, 0.8);
+}

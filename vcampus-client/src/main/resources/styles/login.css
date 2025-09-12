@@ -1,0 +1,109 @@
+/* VCampus登录界面样式 */
+
+.login-root {
+    -fx-background-image: url('../images/campus-main-bg.jpg');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+.login-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.4);
+}
+
+.login-card {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 30, 0, 0, 10);
+}
+
+.glass-effect {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+.input-field {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-border-color: rgba(150, 150, 150, 0.5);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 0 20;
+    -fx-font-size: 14;
+    -fx-text-fill: #2c3e50;
+}
+
+.input-field:focused {
+    -fx-border-color: #888888;
+    -fx-border-width: 2;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+}
+
+.input-label {
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.2), 2, 0, 0, 1);
+}
+
+.modern-button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);
+}
+
+.modern-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 12, 0, 0, 5);
+    -fx-scale-y: 1.05;
+    -fx-scale-x: 1.05;
+}
+
+.login-button {
+    -fx-background-color: linear-gradient(to right, #8e9eab, #eef2f3);
+    -fx-text-fill: #2c3e50;
+}
+
+/* 注册按钮：背景和边框调整为更浅的灰色调 */
+.register-button {
+    -fx-background-color: rgba(255,255,255,0.08); /* 更浅的透明白色，在背景上呈现极浅的灰色 */
+    -fx-text-fill: #2c3e50;
+    -fx-border-color: rgba(200, 200, 200, 0.4); /* 边框颜色也稍微调浅和透明 */
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.title-label {
+    -fx-text-fill: #2c3e50;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.5), 6, 0, 0, 3);
+    -fx-font-weight: bold;
+}
+
+.subtitle-label {
+    -fx-text-fill: #666666;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 3, 0, 0, 1);
+}
+
+.version-label {
+    -fx-text-fill: #888888;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.1), 1, 0, 0, 1);
+}
+
+.choice-box {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-border-color: rgba(150, 150, 150, 0.5);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.choice-box:focused {
+    -fx-border-color: #888888;
+    -fx-border-width: 2;
+}
