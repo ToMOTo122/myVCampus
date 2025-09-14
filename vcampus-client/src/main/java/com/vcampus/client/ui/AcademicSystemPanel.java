@@ -1,6 +1,7 @@
 package com.vcampus.client.ui;
 
 import javafx.application.Platform;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -28,8 +29,8 @@ public class AcademicSystemPanel {
     private StackPane contentArea;
 
     // 当前显示状态
-    private String currentView = "main"; // main, announcements, applications, files, records
-    private String currentCategory = ""; // 用于公告分类
+    private String currentView = "main"; // main, announcement_categories, announcement_list, announcement_detail, files, file_list, upload
+    private String currentCategory = ""; // 用于公告和文件分类，记录上一个分类以便返回
 
     // 色彩方案
     private static final String PRIMARY_COLOR = "#4a7c59";
@@ -42,19 +43,30 @@ public class AcademicSystemPanel {
         this.clientService = clientService;
         this.currentUser = currentUser;
         this.contentArea = contentArea;
+        // 调试输出，用于检查 contentArea 是否为 null
+        System.out.println("DEBUG: AcademicSystemPanel constructor called. contentArea is " + (contentArea == null ? "NULL" : "NOT NULL"));
     }
 
     /**
      * 显示教务系统主界面
      */
     public void showAcademicSystem() {
-        currentView = "main";
+        // --- 修复 NPE 问题：添加防御性检查 ---
+        if (this.contentArea == null) {
+            System.err.println("ERROR: AcademicSystemPanel's contentArea is NULL. Cannot display content.");
+            // 修正此处 showAlert 调用，补充 Alert.AlertType.ERROR
+            showAlert("系统错误", "无法加载界面：主内容区域未初始化。请联系管理员。", Alert.AlertType.ERROR);
+            return; // 阻止 NPE
+        }
+        // ------------------------------------
+
+        currentView = "main"; // 设置当前视图状态
         VBox mainContent = new VBox(20);
         mainContent.setPadding(new Insets(30));
 
         // 标题
         Label titleLabel = new Label("教务管理系统");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 28)); // 字体改为System, 大小增加
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         // 功能卡片网格
@@ -75,7 +87,7 @@ public class AcademicSystemPanel {
     }
 
     /**
-     * 创建最新公告区域（保持原来的样式）
+     * 创建最新公告区域（原来的样式）
      */
     private VBox createAnnouncementArea() {
         VBox area = new VBox(15);
@@ -84,11 +96,11 @@ public class AcademicSystemPanel {
         header.setAlignment(Pos.CENTER_LEFT);
 
         Label titleLabel = new Label("最新公告");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 20)); // 字体改为System, 大小增加
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         Button viewAllButton = new Button("查看全部");
-        viewAllButton.setStyle("-fx-background-color: " + ACCENT_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5;");
+        viewAllButton.setStyle("-fx-background-color: " + ACCENT_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 13px;"); // 字体大小微调
         viewAllButton.setOnAction(e -> showAnnouncementCategories());
 
         Region spacer = new Region();
@@ -129,7 +141,7 @@ public class AcademicSystemPanel {
 
                         if (announcements.isEmpty()) {
                             Label emptyLabel = new Label("暂无公告");
-                            emptyLabel.setStyle("-fx-text-fill: #999999;");
+                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 13px;"); // 字体大小微调
                             container.getChildren().add(emptyLabel);
                         } else {
                             for (Map<String, Object> announcement : announcements) {
@@ -167,18 +179,18 @@ public class AcademicSystemPanel {
         HBox.setHgrow(content, Priority.ALWAYS);
 
         Label titleLabel = new Label((String) announcement.get("title"));
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 15)); // 字体改为System, 大小微调
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         Label infoLabel = new Label(announcement.get("category") + " | " + announcement.get("publishDate"));
-        infoLabel.setFont(Font.font("Arial", 12));
+        infoLabel.setFont(Font.font("System", 12)); // 字体改为System
         infoLabel.setTextFill(Color.web("#666666"));
 
         content.getChildren().addAll(titleLabel, infoLabel);
 
         Label priorityLabel = new Label((String) announcement.get("priority"));
         priorityLabel.setPadding(new Insets(2, 8, 2, 8));
-        priorityLabel.setStyle("-fx-background-radius: 10; -fx-text-fill: white; -fx-font-size: 11;");
+        priorityLabel.setStyle("-fx-background-radius: 10; -fx-text-fill: white; -fx-font-size: 12;"); // 字体大小微调
 
         String priority = (String) announcement.get("priority");
         switch (priority) {
@@ -239,14 +251,14 @@ public class AcademicSystemPanel {
                 "-fx-cursor: hand;");
 
         Label iconLabel = new Label(icon);
-        iconLabel.setFont(Font.font(24));
+        iconLabel.setFont(Font.font(30)); // 图标字体大小增加
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 15)); // 字体改为System, 大小微调
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         Label descLabel = new Label(description);
-        descLabel.setFont(Font.font("Arial", 11));
+        descLabel.setFont(Font.font("System", 12)); // 字体改为System, 大小微调
         descLabel.setTextFill(Color.web("#666666"));
         descLabel.setWrapText(true);
         descLabel.setAlignment(Pos.CENTER);
@@ -283,7 +295,7 @@ public class AcademicSystemPanel {
      * 显示公告分类页面（改为分区域布局）
      */
     private void showAnnouncementCategories() {
-        currentView = "announcements";
+        currentView = "announcement_categories"; // 设置当前视图状态
 
         VBox content = new VBox(20);
         content.setPadding(new Insets(30));
@@ -328,7 +340,7 @@ public class AcademicSystemPanel {
         headerBox.setAlignment(Pos.CENTER_LEFT);
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 17)); // 字体改为System, 大小微调
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         Region spacer = new Region();
@@ -336,7 +348,7 @@ public class AcademicSystemPanel {
 
         Button moreButton = new Button("查看更多");
         moreButton.setStyle("-fx-background-color: " + ACCENT_COLOR + "; -fx-text-fill: white; " +
-                "-fx-background-radius: 5; -fx-font-size: 12px; -fx-cursor: hand;");
+                "-fx-background-radius: 5; -fx-font-size: 13px; -fx-cursor: hand;"); // 字体大小微调
         moreButton.setOnAction(e -> showAnnouncementList(category));
 
         headerBox.getChildren().addAll(titleLabel, spacer, moreButton);
@@ -379,7 +391,7 @@ public class AcademicSystemPanel {
 
                         if (announcements.isEmpty()) {
                             Label emptyLabel = new Label("暂无该分类公告");
-                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 12px;");
+                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 13px;"); // 字体大小微调
                             container.getChildren().add(emptyLabel);
                         } else {
                             for (Map<String, Object> announcement : announcements) {
@@ -389,7 +401,7 @@ public class AcademicSystemPanel {
                         }
                     } else {
                         Label errorLabel = new Label("加载失败");
-                        errorLabel.setStyle("-fx-text-fill: " + ERROR_COLOR + "; -fx-font-size: 12px;");
+                        errorLabel.setStyle("-fx-text-fill: " + ERROR_COLOR + "; -fx-font-size: 13px;"); // 字体大小微调
                         container.getChildren().add(errorLabel);
                     }
                 });
@@ -397,7 +409,7 @@ public class AcademicSystemPanel {
             } catch (Exception e) {
                 Platform.runLater(() -> {
                     Label errorLabel = new Label("网络错误");
-                    errorLabel.setStyle("-fx-text-fill: " + ERROR_COLOR + "; -fx-font-size: 12px;");
+                    errorLabel.setStyle("-fx-text-fill: " + ERROR_COLOR + "; -fx-font-size: 13px;"); // 字体大小微调
                     container.getChildren().add(errorLabel);
                 });
             }
@@ -415,7 +427,7 @@ public class AcademicSystemPanel {
 
         // 公告标题
         Label titleLabel = new Label((String) announcement.get("title"));
-        titleLabel.setFont(Font.font("Arial", 13));
+        titleLabel.setFont(Font.font("System", 14)); // 字体改为System, 大小微调
         titleLabel.setTextFill(Color.web("#333333"));
         titleLabel.setMaxWidth(200);
         HBox.setHgrow(titleLabel, Priority.ALWAYS);
@@ -425,7 +437,7 @@ public class AcademicSystemPanel {
 
         // 发布日期
         Label dateLabel = new Label(announcement.get("publishDate").toString().substring(5, 10)); // 只显示月-日
-        dateLabel.setFont(Font.font("Arial", 12));
+        dateLabel.setFont(Font.font("System", 13)); // 字体改为System, 大小微调
         dateLabel.setTextFill(Color.web("#666666"));
 
         item.getChildren().addAll(titleLabel, spacer, dateLabel);
@@ -445,7 +457,7 @@ public class AcademicSystemPanel {
     }
 
     /**
-     * 创建公告分类卡片
+     * 创建公告分类卡片 (这个方法在 showAnnouncementCategories() 中没有被使用，但在之前的版本中可能存在，为保持完整性保留)
      */
     private VBox createAnnouncementCategoryCard(String title, String icon, String description, String category) {
         VBox card = new VBox(10);
@@ -458,14 +470,14 @@ public class AcademicSystemPanel {
                 "-fx-cursor: hand;");
 
         Label iconLabel = new Label(icon);
-        iconLabel.setFont(Font.font(28));
+        iconLabel.setFont(Font.font(32)); // 图标字体大小增加
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 15)); // 字体改为System, 大小微调
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         Label descLabel = new Label(description);
-        descLabel.setFont(Font.font("Arial", 10));
+        descLabel.setFont(Font.font("System", 11)); // 字体改为System, 大小微调
         descLabel.setTextFill(Color.web("#666666"));
         descLabel.setWrapText(true);
         descLabel.setAlignment(Pos.CENTER);
@@ -500,7 +512,8 @@ public class AcademicSystemPanel {
      * 显示指定分类的公告列表
      */
     private void showAnnouncementList(String category) {
-        currentCategory = category;
+        currentView = "announcement_list"; // 设置当前视图状态
+        currentCategory = category; // 记录当前分类，以便返回详情后能回到正确的列表
 
         VBox content = new VBox(20);
         content.setPadding(new Insets(30));
@@ -529,6 +542,8 @@ public class AcademicSystemPanel {
      * 显示公告详情
      */
     private void showAnnouncementDetail(Map<String, Object> announcement) {
+        currentView = "announcement_detail"; // 设置当前视图状态
+
         VBox content = new VBox(20);
         content.setPadding(new Insets(30));
 
@@ -541,7 +556,7 @@ public class AcademicSystemPanel {
 
         // 公告标题
         Label titleLabel = new Label((String) announcement.get("title"));
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 22)); // 字体改为System, 大小增加
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
         titleLabel.setWrapText(true);
 
@@ -550,16 +565,16 @@ public class AcademicSystemPanel {
         infoBox.setAlignment(Pos.CENTER_LEFT);
 
         Label categoryLabel = new Label("分类：" + announcement.get("category"));
-        categoryLabel.setFont(Font.font("Arial", 12));
+        categoryLabel.setFont(Font.font("System", 13)); // 字体改为System, 大小微调
         categoryLabel.setTextFill(Color.web("#666666"));
 
         Label dateLabel = new Label("发布时间：" + announcement.get("publishDate"));
-        dateLabel.setFont(Font.font("Arial", 12));
+        dateLabel.setFont(Font.font("System", 13)); // 字体改为System, 大小微调
         dateLabel.setTextFill(Color.web("#666666"));
 
         Label priorityLabel = new Label((String) announcement.get("priority"));
         priorityLabel.setPadding(new Insets(2, 8, 2, 8));
-        priorityLabel.setStyle("-fx-background-radius: 10; -fx-text-fill: white; -fx-font-size: 11;");
+        priorityLabel.setStyle("-fx-background-radius: 10; -fx-text-fill: white; -fx-font-size: 12;"); // 字体大小微调
 
         String priority = (String) announcement.get("priority");
         switch (priority) {
@@ -580,6 +595,7 @@ public class AcademicSystemPanel {
         contentAreaTA.setEditable(false);
         contentAreaTA.setWrapText(true);
         contentAreaTA.setPrefRowCount(10);
+        contentAreaTA.setFont(Font.font("System", 13)); // 字体改为System, 大小微调
         contentAreaTA.setStyle("-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; " +
                 "-fx-border-radius: 5; -fx-background-radius: 5;");
 
@@ -600,7 +616,7 @@ public class AcademicSystemPanel {
      * 显示文件下载分类页面（改为分区域布局）
      */
     private void showFileDownload() {
-        currentView = "files";
+        currentView = "files"; // 设置当前视图状态
 
         VBox content = new VBox(20);
         content.setPadding(new Insets(30));
@@ -643,7 +659,7 @@ public class AcademicSystemPanel {
         headerBox.setAlignment(Pos.CENTER_LEFT);
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 17)); // 字体改为System, 大小微调
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         Region spacer = new Region();
@@ -651,7 +667,7 @@ public class AcademicSystemPanel {
 
         Button moreButton = new Button("查看更多");
         moreButton.setStyle("-fx-background-color: " + ACCENT_COLOR + "; -fx-text-fill: white; " +
-                "-fx-background-radius: 5; -fx-font-size: 12px; -fx-cursor: hand;");
+                "-fx-background-radius: 5; -fx-font-size: 13px; -fx-cursor: hand;"); // 字体大小微调
         moreButton.setOnAction(e -> showFileList(category));
 
         headerBox.getChildren().addAll(titleLabel, spacer, moreButton);
@@ -691,7 +707,7 @@ public class AcademicSystemPanel {
 
                         if (files.isEmpty()) {
                             Label emptyLabel = new Label("暂无该分类文件");
-                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 12px;");
+                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 13px;"); // 字体大小微调
                             container.getChildren().add(emptyLabel);
                         } else {
                             // 限制显示数量
@@ -703,7 +719,7 @@ public class AcademicSystemPanel {
                         }
                     } else {
                         Label errorLabel = new Label("加载失败");
-                        errorLabel.setStyle("-fx-text-fill: " + ERROR_COLOR + "; -fx-font-size: 12px;");
+                        errorLabel.setStyle("-fx-text-fill: " + ERROR_COLOR + "; -fx-font-size: 13px;"); // 字体大小微调
                         container.getChildren().add(errorLabel);
                     }
                 });
@@ -711,7 +727,7 @@ public class AcademicSystemPanel {
             } catch (Exception e) {
                 Platform.runLater(() -> {
                     Label errorLabel = new Label("网络错误");
-                    errorLabel.setStyle("-fx-text-fill: " + ERROR_COLOR + "; -fx-font-size: 12px;");
+                    errorLabel.setStyle("-fx-text-fill: " + ERROR_COLOR + "; -fx-font-size: 13px;"); // 字体大小微调
                     container.getChildren().add(errorLabel);
                 });
             }
@@ -729,11 +745,11 @@ public class AcademicSystemPanel {
 
         // 文件图标
         Label iconLabel = new Label("📄");
-        iconLabel.setFont(Font.font(14));
+        iconLabel.setFont(Font.font(16)); // 图标字体大小增加
 
         // 文件名
         Label nameLabel = new Label((String) file.get("originalName"));
-        nameLabel.setFont(Font.font("Arial", 13));
+        nameLabel.setFont(Font.font("System", 14)); // 字体改为System, 大小微调
         nameLabel.setTextFill(Color.web("#333333"));
         nameLabel.setMaxWidth(250);
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
@@ -744,7 +760,7 @@ public class AcademicSystemPanel {
         // 下载按钮
         Button downloadBtn = new Button("下载");
         downloadBtn.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-text-fill: white; " +
-                "-fx-background-radius: 3; -fx-font-size: 11px; -fx-cursor: hand; -fx-pref-width: 50;");
+                "-fx-background-radius: 3; -fx-font-size: 12px; -fx-cursor: hand; -fx-pref-width: 50;"); // 字体大小微调
         downloadBtn.setOnAction(e -> {
             e.consume(); // 阻止事件冒泡
             downloadFile((Integer) file.get("id"));
@@ -767,7 +783,7 @@ public class AcademicSystemPanel {
     }
 
     /**
-     * 创建文件分类卡片
+     * 创建文件分类卡片 (这个方法在 showFileDownload() 中没有被使用，但在之前的版本中可能存在，为保持完整性保留)
      */
     private VBox createFileCategoryCard(String title, String icon, String description, String category) {
         VBox card = new VBox(10);
@@ -780,14 +796,14 @@ public class AcademicSystemPanel {
                 "-fx-cursor: hand;");
 
         Label iconLabel = new Label(icon);
-        iconLabel.setFont(Font.font(28));
+        iconLabel.setFont(Font.font(32)); // 图标字体大小增加
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 15)); // 字体改为System, 大小微调
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         Label descLabel = new Label(description);
-        descLabel.setFont(Font.font("Arial", 10));
+        descLabel.setFont(Font.font("System", 11)); // 字体改为System, 大小微调
         descLabel.setTextFill(Color.web("#666666"));
         descLabel.setWrapText(true);
         descLabel.setAlignment(Pos.CENTER);
@@ -822,6 +838,9 @@ public class AcademicSystemPanel {
      * 显示指定分类的文件列表
      */
     private void showFileList(String category) {
+        currentView = "file_list"; // 设置当前视图状态
+        currentCategory = category; // 记录当前分类，以便返回（虽然目前文件列表返回是回到文件分类，但保留以防将来需求变更）
+
         VBox content = new VBox(20);
         content.setPadding(new Insets(30));
 
@@ -849,7 +868,7 @@ public class AcademicSystemPanel {
      * 显示文件上传页面（管理员端）
      */
     private void showFileUpload() {
-        currentView = "upload";
+        currentView = "upload"; // 设置当前视图状态
 
         VBox content = new VBox(20);
         content.setPadding(new Insets(30));
@@ -862,25 +881,42 @@ public class AcademicSystemPanel {
         uploadArea.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 30;");
 
         Label titleLabel = new Label("上传新文件");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 20)); // 字体改为System, 大小增加
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         // 上传表单
         GridPane form = new GridPane();
         form.setHgap(15);
         form.setVgap(15);
+        form.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;");
+
+        // --- 修复文字截断问题：调整列约束 ---
+        ColumnConstraints labelCol = new ColumnConstraints();
+        labelCol.setHgrow(Priority.NEVER); // 标签列不自动增长
+        labelCol.setHalignment(HPos.RIGHT); // 标签右对齐
+        labelCol.setMinWidth(120); // 增加最小宽度，确保中文标签显示完整
+
+        ColumnConstraints inputCol = new ColumnConstraints();
+        inputCol.setHgrow(Priority.ALWAYS); // 输入框列自动增长
+        inputCol.setMinWidth(250); // 输入框最小宽度
+
+        form.getColumnConstraints().addAll(labelCol, inputCol);
+        // ------------------------------------
 
         // 文件选择区域
         Label fileLabel = new Label("选择文件 *");
+        fileLabel.setFont(Font.font("System", 14)); // 字体改为System
         HBox fileBox = new HBox(10);
         TextField filePathField = new TextField();
         filePathField.setPromptText("请选择要上传的文件");
         filePathField.setEditable(false);
         filePathField.setPrefHeight(35);
-        HBox.setHgrow(filePathField, Priority.ALWAYS);
+        filePathField.setFont(Font.font("System", 13)); // 字体改为System
+        filePathField.setMaxWidth(Double.MAX_VALUE); // 确保文本框自动增长
+        HBox.setHgrow(filePathField, Priority.ALWAYS); // 确保文本框在HBox中也自动增长
 
         Button browseButton = new Button("浏览文件");
-        browseButton.setStyle("-fx-background-color: " + ACCENT_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5;");
+        browseButton.setStyle("-fx-background-color: " + ACCENT_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 13px;"); // 字体大小微调
         browseButton.setOnAction(e -> {
             // 模拟文件选择
             javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
@@ -902,24 +938,34 @@ public class AcademicSystemPanel {
         });
 
         fileBox.getChildren().addAll(filePathField, browseButton);
+        GridPane.setHgrow(fileBox, Priority.ALWAYS); // 确保HBox在GridPane中也自动增长
 
         // 文件分类
-        Label categoryLabel = new Label("文件分类 *");
+        Label categoryFileLabel = new Label("文件分类 *"); // 区分变量名
+        categoryFileLabel.setFont(Font.font("System", 14)); // 字体改为System
         ComboBox<String> categoryBox = new ComboBox<>();
         categoryBox.getItems().addAll("校历", "教务专区", "学籍专区", "教室管理");
         categoryBox.setValue("校历");
         categoryBox.setPrefHeight(35);
+        categoryBox.setMaxWidth(Double.MAX_VALUE); // 确保ComboBox自动增长
+        categoryBox.setStyle("-fx-font-size: 13px;"); // 字体大小微调
+        GridPane.setHgrow(categoryBox, Priority.ALWAYS); // 确保ComboBox在GridPane中也自动增长
 
         // 文件描述
         Label descLabel = new Label("文件描述");
+        descLabel.setFont(Font.font("System", 14)); // 字体改为System
         TextArea descArea = new TextArea();
         descArea.setPromptText("请输入文件描述...");
         descArea.setPrefRowCount(3);
         descArea.setWrapText(true);
+        descArea.setFont(Font.font("System", 13)); // 字体改为System
+        descArea.setMaxWidth(Double.MAX_VALUE); // 确保TextArea自动增长
+        GridPane.setHgrow(descArea, Priority.ALWAYS); // 确保TextArea在GridPane中也自动增长
+
 
         form.add(fileLabel, 0, 0);
         form.add(fileBox, 1, 0);
-        form.add(categoryLabel, 0, 1);
+        form.add(categoryFileLabel, 0, 1); // 使用新的Label变量
         form.add(categoryBox, 1, 1);
         form.add(descLabel, 0, 2);
         form.add(descArea, 1, 2);
@@ -929,7 +975,7 @@ public class AcademicSystemPanel {
         buttonArea.setAlignment(Pos.CENTER_RIGHT);
 
         Button uploadButton = new Button("上传文件");
-        uploadButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5;");
+        uploadButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 13px;"); // 字体大小微调
         uploadButton.setOnAction(e -> {
             if (filePathField.getText().trim().isEmpty()) {
                 showAlert("输入错误", "请选择要上传的文件", Alert.AlertType.WARNING);
@@ -948,7 +994,7 @@ public class AcademicSystemPanel {
         managementArea.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;");
 
         Label managementTitle = new Label("文件管理");
-        managementTitle.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        managementTitle.setFont(Font.font("System", FontWeight.BOLD, 17)); // 字体改为System, 大小微调
         managementTitle.setTextFill(Color.web(PRIMARY_COLOR));
 
         // 文件列表
@@ -978,19 +1024,31 @@ public class AcademicSystemPanel {
 
         Button backButton = new Button("← 返回");
         backButton.setStyle("-fx-background-color: " + ACCENT_COLOR + "; -fx-text-fill: white; " +
-                "-fx-background-radius: 5; -fx-cursor: hand;");
+                "-fx-background-radius: 5; -fx-cursor: hand; -fx-font-size: 13px;"); // 字体大小微调
         backButton.setOnAction(e -> {
-            if (currentView.equals("announcements") && !currentCategory.isEmpty()) {
-                // 从公告详情返回到公告分类
-                showAnnouncementCategories();
-            } else {
-                // 返回主界面
-                showAcademicSystem();
+            // --- 修复公告返回无反应问题：根据 currentView 进行多层级返回 ---
+            switch (currentView) {
+                case "announcement_detail":
+                    showAnnouncementList(currentCategory); // 从公告详情返回到特定公告列表
+                    break;
+                case "announcement_list":
+                    showAnnouncementCategories(); // 从公告列表返回到公告分类页
+                    break;
+                case "announcement_categories":
+                case "file_list": // 从文件列表返回到文件分类页 (如果需要返回到文件分类页面，需要有一个 showFileCategories() 方法)
+                case "files": // 文件分类页
+                case "upload": // 文件上传管理页
+                    showAcademicSystem(); // 从分类页或文件管理页返回主界面
+                    break;
+                default:
+                    showAcademicSystem(); // 默认返回主界面，以防万一
+                    break;
             }
+            // --------------------------------------------------------
         });
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 20)); // 字体改为System, 大小增加
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         header.getChildren().addAll(backButton, titleLabel);
@@ -1012,7 +1070,7 @@ public class AcademicSystemPanel {
         root.setStyle("-fx-background-color: #f8f9fa;");
 
         Label titleLabel = new Label("发布新公告");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 20)); // 字体改为System, 大小增加
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         // 表单
@@ -1021,39 +1079,72 @@ public class AcademicSystemPanel {
         form.setVgap(15);
         form.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;");
 
+        // --- 修复文字截断问题：调整列约束 ---
+        ColumnConstraints labelCol = new ColumnConstraints();
+        labelCol.setHgrow(Priority.NEVER); // 标签列不自动增长
+        labelCol.setHalignment(HPos.RIGHT); // 标签右对齐
+        labelCol.setMinWidth(120); // 增加最小宽度，确保中文标签显示完整
+
+        ColumnConstraints inputCol = new ColumnConstraints();
+        inputCol.setHgrow(Priority.ALWAYS); // 输入框列自动增长
+        inputCol.setMinWidth(250); // 输入框最小宽度
+
+        form.getColumnConstraints().addAll(labelCol, inputCol);
+        // ------------------------------------
+
         // 公告标题
         Label titleFieldLabel = new Label("公告标题 *");
+        titleFieldLabel.setFont(Font.font("System", 14)); // 字体改为System
         TextField titleField = new TextField();
         titleField.setPromptText("请输入公告标题");
         titleField.setPrefHeight(35);
+        titleField.setFont(Font.font("System", 13)); // 字体改为System
+        titleField.setMaxWidth(Double.MAX_VALUE); // 确保文本框自动增长
+        GridPane.setHgrow(titleField, Priority.ALWAYS); // 确保文本框在GridPane中自动增长
 
         // 公告分类
         Label categoryLabel = new Label("公告分类 *");
+        categoryLabel.setFont(Font.font("System", 14)); // 字体改为System
         ComboBox<String> categoryBox = new ComboBox<>();
         categoryBox.getItems().addAll("教务信息", "学籍管理", "教学研究", "实践教学", "国际交流", "文化素质教育");
         categoryBox.setValue("教务信息");
         categoryBox.setPrefHeight(35);
+        categoryBox.setMaxWidth(Double.MAX_VALUE); // 确保ComboBox自动增长
+        categoryBox.setStyle("-fx-font-size: 13px;"); // 字体大小微调
+        GridPane.setHgrow(categoryBox, Priority.ALWAYS); // 确保ComboBox在GridPane中自动增长
 
         // 优先级
         Label priorityLabel = new Label("优先级");
+        priorityLabel.setFont(Font.font("System", 14)); // 字体改为System
         ComboBox<String> priorityBox = new ComboBox<>();
         priorityBox.getItems().addAll("普通", "重要", "紧急");
         priorityBox.setValue("普通");
         priorityBox.setPrefHeight(35);
+        priorityBox.setMaxWidth(Double.MAX_VALUE); // 确保ComboBox自动增长
+        priorityBox.setStyle("-fx-font-size: 13px;"); // 字体大小微调
+        GridPane.setHgrow(priorityBox, Priority.ALWAYS); // 确保ComboBox在GridPane中自动增长
 
         // 目标受众
         Label audienceLabel = new Label("目标受众");
+        audienceLabel.setFont(Font.font("System", 14)); // 字体改为System
         ComboBox<String> audienceBox = new ComboBox<>();
         audienceBox.getItems().addAll("全体", "学生", "教师");
         audienceBox.setValue("全体");
         audienceBox.setPrefHeight(35);
+        audienceBox.setMaxWidth(Double.MAX_VALUE); // 确保ComboBox自动增长
+        audienceBox.setStyle("-fx-font-size: 13px;"); // 字体大小微调
+        GridPane.setHgrow(audienceBox, Priority.ALWAYS); // 确保ComboBox在GridPane中自动增长
 
         // 公告内容
         Label contentLabel = new Label("公告内容 *");
-        TextArea contentArea = new TextArea();
-        contentArea.setPromptText("请输入公告内容...");
-        contentArea.setPrefRowCount(8);
-        contentArea.setWrapText(true);
+        contentLabel.setFont(Font.font("System", 14)); // 字体改为System
+        TextArea contentAreaDialog = new TextArea(); // 区分变量名
+        contentAreaDialog.setPromptText("请输入公告内容...");
+        contentAreaDialog.setPrefRowCount(8);
+        contentAreaDialog.setWrapText(true);
+        contentAreaDialog.setFont(Font.font("System", 13)); // 字体改为System
+        contentAreaDialog.setMaxWidth(Double.MAX_VALUE); // 确保TextArea自动增长
+        GridPane.setHgrow(contentAreaDialog, Priority.ALWAYS); // 确保TextArea在GridPane中自动增长
 
         form.add(titleFieldLabel, 0, 0);
         form.add(titleField, 1, 0);
@@ -1064,21 +1155,21 @@ public class AcademicSystemPanel {
         form.add(audienceLabel, 0, 3);
         form.add(audienceBox, 1, 3);
         form.add(contentLabel, 0, 4);
-        form.add(contentArea, 1, 4);
+        form.add(contentAreaDialog, 1, 4);
 
         // 按钮
         HBox buttonArea = new HBox(15);
         buttonArea.setAlignment(Pos.CENTER_RIGHT);
 
         Button cancelButton = new Button("取消");
-        cancelButton.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 5;");
+        cancelButton.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 13px;"); // 字体大小微调
         cancelButton.setOnAction(e -> dialog.close());
 
         Button publishButton = new Button("发布公告");
-        publishButton.setStyle("-fx-background-color: " + PRIMARY_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5;");
+        publishButton.setStyle("-fx-background-color: " + PRIMARY_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 13px;"); // 字体大小微调
         publishButton.setOnAction(e -> {
             String title = titleField.getText().trim();
-            String content = contentArea.getText().trim();
+            String content = contentAreaDialog.getText().trim(); // 使用新的变量名
 
             if (title.isEmpty() || content.isEmpty()) {
                 showAlert("输入错误", "请填写公告标题和内容", Alert.AlertType.WARNING);
@@ -1113,7 +1204,7 @@ public class AcademicSystemPanel {
         root.setStyle("-fx-background-color: #f8f9fa;");
 
         Label titleLabel = new Label("提交新申请");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 20)); // 字体改为System, 大小增加
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         // 表单
@@ -1122,25 +1213,50 @@ public class AcademicSystemPanel {
         form.setVgap(15);
         form.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;");
 
+        // --- 修复文字截断问题：调整列约束 ---
+        ColumnConstraints labelCol = new ColumnConstraints();
+        labelCol.setHgrow(Priority.NEVER); // 标签列不自动增长
+        labelCol.setHalignment(HPos.RIGHT); // 标签右对齐
+        labelCol.setMinWidth(120); // 增加最小宽度，确保中文标签显示完整
+
+        ColumnConstraints inputCol = new ColumnConstraints();
+        inputCol.setHgrow(Priority.ALWAYS); // 输入框列自动增长
+        inputCol.setMinWidth(250); // 输入框最小宽度
+
+        form.getColumnConstraints().addAll(labelCol, inputCol);
+        // ------------------------------------
+
         // 申请类型
         Label typeLabel = new Label("申请类型 *");
+        typeLabel.setFont(Font.font("System", 14)); // 字体改为System
         ComboBox<String> typeBox = new ComboBox<>();
         typeBox.getItems().addAll("成绩证明", "在读证明", "学籍证明", "毕业证明", "转专业申请", "休学申请", "复学申请", "其他申请");
         typeBox.setValue("成绩证明");
         typeBox.setPrefHeight(35);
+        typeBox.setMaxWidth(Double.MAX_VALUE); // 确保ComboBox自动增长
+        typeBox.setStyle("-fx-font-size: 13px;"); // 字体大小微调
+        GridPane.setHgrow(typeBox, Priority.ALWAYS); // 确保ComboBox在GridPane中也自动增长
 
         // 申请标题
         Label titleFieldLabel = new Label("申请标题 *");
+        titleFieldLabel.setFont(Font.font("System", 14)); // 字体改为System
         TextField titleField = new TextField();
         titleField.setPromptText("请输入申请标题");
         titleField.setPrefHeight(35);
+        titleField.setFont(Font.font("System", 13)); // 字体改为System
+        titleField.setMaxWidth(Double.MAX_VALUE); // 确保文本框自动增长
+        GridPane.setHgrow(titleField, Priority.ALWAYS); // 确保文本框在GridPane中也自动增长
 
         // 申请内容
         Label contentLabel = new Label("申请内容 *");
-        TextArea contentArea = new TextArea();
-        contentArea.setPromptText("请详细说明申请原因和具体情况...");
-        contentArea.setPrefRowCount(10);
-        contentArea.setWrapText(true);
+        contentLabel.setFont(Font.font("System", 14)); // 字体改为System
+        TextArea contentAreaDialog = new TextArea(); // 区分变量名
+        contentAreaDialog.setPromptText("请详细说明申请原因和具体情况...");
+        contentAreaDialog.setPrefRowCount(10);
+        contentAreaDialog.setWrapText(true);
+        contentAreaDialog.setFont(Font.font("System", 13)); // 字体改为System
+        contentAreaDialog.setMaxWidth(Double.MAX_VALUE); // 确保TextArea自动增长
+        GridPane.setHgrow(contentAreaDialog, Priority.ALWAYS); // 确保TextArea在GridPane中也自动增长
 
         // 预填充标题
         typeBox.setOnAction(e -> {
@@ -1155,22 +1271,22 @@ public class AcademicSystemPanel {
         form.add(titleFieldLabel, 0, 1);
         form.add(titleField, 1, 1);
         form.add(contentLabel, 0, 2);
-        form.add(contentArea, 1, 2);
+        form.add(contentAreaDialog, 1, 2); // 使用新的变量名
 
         // 按钮
         HBox buttonArea = new HBox(15);
         buttonArea.setAlignment(Pos.CENTER_RIGHT);
 
         Button cancelButton = new Button("取消");
-        cancelButton.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 5;");
+        cancelButton.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 13px;"); // 字体大小微调
         cancelButton.setOnAction(e -> dialog.close());
 
         Button submitButton = new Button("提交申请");
-        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5;");
+        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 13px;"); // 字体大小微调
         submitButton.setOnAction(e -> {
             String type = typeBox.getValue();
             String title = titleField.getText().trim();
-            String content = contentArea.getText().trim();
+            String content = contentAreaDialog.getText().trim(); // 使用新的变量名
 
             if (title.isEmpty() || content.isEmpty()) {
                 showAlert("输入错误", "请填写申请标题和内容", Alert.AlertType.WARNING);
@@ -1220,7 +1336,7 @@ public class AcademicSystemPanel {
 
                         if (announcements.isEmpty()) {
                             Label emptyLabel = new Label("暂无" + category + "相关公告");
-                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 14px;");
+                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 15px;"); // 字体大小微调
                             emptyLabel.setPadding(new Insets(20));
                             container.getChildren().add(emptyLabel);
                         } else {
@@ -1260,12 +1376,12 @@ public class AcademicSystemPanel {
         titleRow.setAlignment(Pos.CENTER_LEFT);
 
         Label titleLabel = new Label((String) announcement.get("title"));
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 15)); // 字体改为System, 大小微调
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         Label priorityLabel = new Label((String) announcement.get("priority"));
         priorityLabel.setPadding(new Insets(2, 6, 2, 6));
-        priorityLabel.setStyle("-fx-background-radius: 8; -fx-text-fill: white; -fx-font-size: 10;");
+        priorityLabel.setStyle("-fx-background-radius: 8; -fx-text-fill: white; -fx-font-size: 11;"); // 字体大小微调
 
         String priority = (String) announcement.get("priority");
         switch (priority) {
@@ -1287,14 +1403,14 @@ public class AcademicSystemPanel {
         // 信息行
         Label infoLabel = new Label("发布时间：" + announcement.get("publishDate") +
                 " | 浏览：" + announcement.get("viewCount") + "次");
-        infoLabel.setFont(Font.font("Arial", 11));
+        infoLabel.setFont(Font.font("System", 12)); // 字体改为System, 大小微调
         infoLabel.setTextFill(Color.web("#666666"));
 
         // 摘要
         String summary = (String) announcement.get("summary");
         if (summary != null && !summary.isEmpty()) {
             Label summaryLabel = new Label(summary + "...");
-            summaryLabel.setFont(Font.font("Arial", 12));
+            summaryLabel.setFont(Font.font("System", 13)); // 字体改为System, 大小微调
             summaryLabel.setTextFill(Color.web("#333333"));
             summaryLabel.setWrapText(true);
             item.getChildren().addAll(titleRow, infoLabel, summaryLabel);
@@ -1367,7 +1483,7 @@ public class AcademicSystemPanel {
 
                         if (files.isEmpty()) {
                             Label emptyLabel = new Label("暂无" + category + "相关文件");
-                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 14px;");
+                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 15px;"); // 字体大小微调
                             emptyLabel.setPadding(new Insets(20));
                             container.getChildren().add(emptyLabel);
                         } else {
@@ -1377,17 +1493,13 @@ public class AcademicSystemPanel {
                             }
                         }
                     } else {
-                        Label errorLabel = new Label("加载文件失败：" + response.getData());
-                        errorLabel.setTextFill(Color.web(ERROR_COLOR));
-                        container.getChildren().add(errorLabel);
+                        showAlert("加载文件失败", "加载文件失败：" + response.getData(), Alert.AlertType.ERROR); // 修正showAlert
                     }
                 });
 
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    Label errorLabel = new Label("网络错误：" + e.getMessage());
-                    errorLabel.setTextFill(Color.web(ERROR_COLOR));
-                    container.getChildren().add(errorLabel);
+                    showAlert("网络错误", "加载文件时发生网络错误：" + e.getMessage(), Alert.AlertType.ERROR); // 修正showAlert
                 });
             }
         }).start();
@@ -1405,20 +1517,20 @@ public class AcademicSystemPanel {
 
         // 文件图标
         Label iconLabel = new Label("📄");
-        iconLabel.setFont(Font.font(24));
+        iconLabel.setFont(Font.font(26)); // 图标字体大小增加
 
         // 文件信息
         VBox fileInfo = new VBox(5);
         HBox.setHgrow(fileInfo, Priority.ALWAYS);
 
         Label nameLabel = new Label((String) file.get("originalName"));
-        nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        nameLabel.setFont(Font.font("System", FontWeight.BOLD, 15)); // 字体改为System, 大小微调
         nameLabel.setTextFill(Color.web(PRIMARY_COLOR));
 
         String description = (String) file.get("description");
         if (description != null && !description.isEmpty()) {
             Label descLabel = new Label(description);
-            descLabel.setFont(Font.font("Arial", 12));
+            descLabel.setFont(Font.font("System", 13)); // 字体改为System, 大小微调
             descLabel.setTextFill(Color.web("#666666"));
             fileInfo.getChildren().addAll(nameLabel, descLabel);
         } else {
@@ -1428,14 +1540,14 @@ public class AcademicSystemPanel {
         // 文件大小和时间信息
         Label infoLabel = new Label("大小：" + formatFileSize((Long) file.get("fileSize")) +
                 " | 上传时间：" + file.get("uploadTime"));
-        infoLabel.setFont(Font.font("Arial", 11));
+        infoLabel.setFont(Font.font("System", 12)); // 字体改为System, 大小微调
         infoLabel.setTextFill(Color.web("#999999"));
         fileInfo.getChildren().add(infoLabel);
 
         // 下载按钮
         Button downloadButton = new Button("下载");
         downloadButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-text-fill: white; " +
-                "-fx-background-radius: 5; -fx-cursor: hand;");
+                "-fx-background-radius: 5; -fx-cursor: hand; -fx-font-size: 13px;"); // 字体大小微调
         downloadButton.setOnAction(e -> downloadFile((Integer) file.get("id")));
 
         item.getChildren().addAll(iconLabel, fileInfo, downloadButton);
@@ -1525,7 +1637,7 @@ public class AcademicSystemPanel {
 
                         if (files.isEmpty()) {
                             Label emptyLabel = new Label("暂无文件");
-                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 14px;");
+                            emptyLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 15px;"); // 字体大小微调
                             emptyLabel.setPadding(new Insets(20));
                             container.getChildren().add(emptyLabel);
                         } else {
@@ -1535,17 +1647,13 @@ public class AcademicSystemPanel {
                             }
                         }
                     } else {
-                        Label errorLabel = new Label("加载文件失败：" + response.getData());
-                        errorLabel.setTextFill(Color.web(ERROR_COLOR));
-                        container.getChildren().add(errorLabel);
+                        showAlert("加载文件失败", "加载文件失败：" + response.getData(), Alert.AlertType.ERROR); // 修正showAlert
                     }
                 });
 
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    Label errorLabel = new Label("网络错误：" + e.getMessage());
-                    errorLabel.setTextFill(Color.web(ERROR_COLOR));
-                    container.getChildren().add(errorLabel);
+                    showAlert("网络错误", "加载文件时发生网络错误：" + e.getMessage(), Alert.AlertType.ERROR); // 修正showAlert
                 });
             }
         }).start();
@@ -1566,11 +1674,11 @@ public class AcademicSystemPanel {
         HBox.setHgrow(fileInfo, Priority.ALWAYS);
 
         Label nameLabel = new Label((String) file.get("originalName"));
-        nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        nameLabel.setFont(Font.font("System", FontWeight.BOLD, 13)); // 字体改为System, 大小微调
 
         Label infoLabel = new Label("分类：" + file.get("category") + " | 大小：" +
                 formatFileSize((Long) file.get("fileSize")) + " | 上传时间：" + file.get("uploadTime"));
-        infoLabel.setFont(Font.font("Arial", 10));
+        infoLabel.setFont(Font.font("System", 11)); // 字体改为System, 大小微调
         infoLabel.setTextFill(Color.web("#666666"));
 
         fileInfo.getChildren().addAll(nameLabel, infoLabel);
@@ -1579,7 +1687,7 @@ public class AcademicSystemPanel {
         HBox buttonBox = new HBox(5);
 
         Button deleteButton = new Button("删除");
-        deleteButton.setStyle("-fx-background-color: " + ERROR_COLOR + "; -fx-text-fill: white; -fx-background-radius: 3;");
+        deleteButton.setStyle("-fx-background-color: " + ERROR_COLOR + "; -fx-text-fill: white; -fx-background-radius: 3; -fx-font-size: 12px;"); // 字体大小微调
         deleteButton.setOnAction(e -> deleteFile((Integer) file.get("id")));
 
         buttonBox.getChildren().add(deleteButton);
@@ -1646,7 +1754,7 @@ public class AcademicSystemPanel {
                     if (response.getCode() == Message.Code.SUCCESS) {
                         showAlert("发布成功", "公告已成功发布！", Alert.AlertType.INFORMATION);
                         dialog.close();
-                        // 刷新公告列表
+                        // 刷新公告列表（返回主界面后，最新公告区域会自动刷新）
                         showAcademicSystem();
                     } else {
                         showAlert("发布失败", "公告发布失败：" + response.getData(), Alert.AlertType.ERROR);
@@ -1685,7 +1793,7 @@ public class AcademicSystemPanel {
                                         "\n请记住申请编号，可在申请列表中查看进度。",
                                 Alert.AlertType.INFORMATION);
                         dialog.close();
-                        // 刷新申请列表
+                        // 刷新申请列表（返回主界面后，如果有显示申请列表的区域，它会刷新）
                         showAcademicSystem();
                     } else {
                         showAlert("提交失败", "申请提交失败：" + response.getData(), Alert.AlertType.ERROR);
@@ -1734,6 +1842,7 @@ public class AcademicSystemPanel {
         showFunctionPlaceholder("审批申请");
     }
 
+    // 将方法名更正为 showRecordsManagement
     private void showRecordsManagement() {
         showFunctionPlaceholder("学籍管理");
     }
