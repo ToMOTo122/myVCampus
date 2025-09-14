@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.vcampus</groupId>
         <artifactId>vcampus-system</artifactId>
@@ -15,15 +15,30 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- 公共模块 -->
         <dependency>
             <groupId>com.vcampus</groupId>
             <artifactId>vcampus-common</artifactId>
+            <!-- 同一 Reactor 内可省略版本；保留也无妨 -->
             <version>1.0.0</version>
+        </dependency>
+
+        <!-- MySQL 驱动（版本由父 POM dependencyManagement 管理） -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <!-- Gson（版本由父 POM dependencyManagement 管理） -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- 打可执行 fat-jar，仅对服务端生效 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -41,6 +56,8 @@
                                     <mainClass>com.vcampus.server.VCampusServer</mainClass>
                                 </transformer>
                             </transformers>
+                            <!-- 避免生成 dependency-reduced-pom 破坏多模块 -->
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>

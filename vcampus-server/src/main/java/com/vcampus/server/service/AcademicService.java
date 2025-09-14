@@ -477,6 +477,7 @@ public class AcademicService {
                 application.put("applicantId", rs.getString("applicant_id"));
                 application.put("applicantName", rs.getString("applicant_name"));
                 application.put("applicationType", rs.getString("application_type"));
+                application.put("title", rs.getString("title"));
                 application.put("status", rs.getString("status"));
                 application.put("submitTime", rs.getTimestamp("submit_time"));
                 application.put("reviewTime", rs.getTimestamp("review_time"));

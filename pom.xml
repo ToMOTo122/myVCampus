@@ -18,22 +18,25 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- 版本集中管理 -->
         <javafx.version>17.0.2</javafx.version>
         <mysql.version>8.0.33</mysql.version>
         <junit.version>5.9.2</junit.version>
+        <gson.version>2.10.1</gson.version>
     </properties>
 
-    <!-- 子模块列表 -->
+    <!-- 子模块 -->
     <modules>
         <module>vcampus-common</module>
         <module>vcampus-server</module>
         <module>vcampus-client</module>
     </modules>
 
-    <!-- 依赖管理 - 统一版本控制 -->
+    <!-- 依赖版本管理 -->
     <dependencyManagement>
         <dependencies>
-            <!-- JavaFX Dependencies -->
+            <!-- JavaFX -->
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
@@ -45,14 +48,21 @@
                 <version>${javafx.version}</version>
             </dependency>
 
-            <!-- MySQL Driver -->
+            <!-- MySQL 驱动 -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
 
-            <!-- Test Dependencies -->
+            <!-- Gson（给服务端用） -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+
+            <!-- 测试 -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
@@ -62,86 +72,57 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- 插件管理 - 统一插件版本和配置 -->
+    <!-- 插件版本管理（子模块里按需声明使用） -->
     <build>
         <pluginManagement>
             <plugins>
-                <!-- Maven Compiler Plugin -->
+                <!-- 编译 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.11.0</version>
                     <configuration>
-                        <source>11</source>
-                        <target>11</target>
-                        <encoding>UTF-8</encoding>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
 
-                <!-- JavaFX Maven Plugin -->
+                <!-- JavaFX（客户端模块会声明使用） -->
                 <plugin>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-maven-plugin</artifactId>
                     <version>0.0.8</version>
-                    <configuration>
-                        <mainClass>com.vcampus.client.VCampusClient</mainClass>
-                    </configuration>
                 </plugin>
 
-                <!-- Maven Shade Plugin for creating fat JARs -->
+                <!-- 打包（各模块各自配置 mainClass） -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>3.4.1</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                            <configuration>
-                                <createDependencyReducedPom>false</createDependencyReducedPom>
-                                <transformers>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                        <mainClass>com.vcampus.client.VCampusClient</mainClass>
-                                    </transformer>
-                                </transformers>
-                                <filters>
-                                    <filter>
-                                        <artifact>*:*</artifact>
-                                        <excludes>
-                                            <exclude>META-INF/*.SF</exclude>
-                                            <exclude>META-INF/*.DSA</exclude>
-                                            <exclude>META-INF/*.RSA</exclude>
-                                        </excludes>
-                                    </filter>
-                                </filters>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
 
-                <!-- Maven Surefire Plugin for tests -->
+                <!-- 单测 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.1.2</version>
                 </plugin>
 
-                <!-- Maven Resources Plugin -->
+                <!-- 资源编码 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.3.1</version>
                     <configuration>
-                        <encoding>UTF-8</encoding>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
 
-    <!-- 仓库配置 - 加速依赖下载 -->
+    <!-- 仓库 -->
     <repositories>
         <repository>
             <id>alimaven</id>

@@ -342,27 +342,4 @@ public class ClientService {
         }
         return "未连接";
     }
-
-    /**
-     * 修改后的sendRequest方法 - 使用现有连接而不是创建新连接
-     */
-    public Message sendRequest(Message request) {
-        try {
-            // 使用现有的连接发送请求
-            if (isConnected()) {
-                return sendAndReceive(request);
-            } else {
-                // 如果连接已断开，返回错误消息
-                Message errorResponse = new Message(Message.Type.ERROR, "与服务器连接已断开");
-                errorResponse.setCode(Message.Code.ERROR);
-                return errorResponse;
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            // 返回一个包含错误信息的Message对象，以便前端处理
-            Message errorResponse = new Message(Message.Type.ERROR, "与服务器通信失败: " + e.getMessage());
-            errorResponse.setCode(Message.Code.ERROR);
-            return errorResponse;
-        }
-    }
 }
