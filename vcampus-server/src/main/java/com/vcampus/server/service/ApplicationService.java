@@ -310,117 +310,37 @@ public class ApplicationService {
     /**
      * 更新申请状态
      */
-    /**
-     * 更新申请状态
-     */
     private Message updateApplicationStatus(Integer applicationId, String reviewerId,
                                             String status, String reviewComment) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        PreparedStatement flowStmt = null; // 用于更新流程步骤
-        PreparedStatement nextFlowStmt = null; // 用于激活下一个流程步骤
-        ResultSet rs = null;
 
         try {
             conn = DatabaseHelper.getConnection();
-            conn.setAutoCommit(false); // 开启事务
-
-            // 1. 获取当前申请的流程信息，找到当前“处理中”的步骤
-            int currentStepOrder = -1;
-            String currentStepName = null;
-            String getCurrentFlowSql = "SELECT step_order, step_name FROM tbl_application_flow WHERE application_id = ? AND status = '处理中' ORDER BY step_order LIMIT 1";
-            stmt = conn.prepareStatement(getCurrentFlowSql);
-            stmt.setInt(1, applicationId);
-            rs = stmt.executeQuery();
-            if (rs.next()) {
-                currentStepOrder = rs.getInt("step_order");
-                currentStepName = rs.getString("step_name");
-            }
-            stmt.close(); // 关闭当前stmt，准备复用或创建新的
-
-            // 2. 更新主申请表的整体状态
             String sql = "UPDATE tbl_application SET status = ?, reviewer_id = ?, " +
                     "review_time = ?, review_comment = ? WHERE id = ?";
+
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, status);
             stmt.setString(2, reviewerId);
             stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
             stmt.setString(4, reviewComment);
             stmt.setInt(5, applicationId);
+
             int result = stmt.executeUpdate();
-
             if (result > 0) {
-                // 3. 更新当前流程步骤的状态
-                if (currentStepOrder != -1) {
-                    String updateFlowSql = "UPDATE tbl_application_flow SET status = ?, handler_id = ?, handle_time = ?, comment = ? WHERE application_id = ? AND step_order = ?";
-                    flowStmt = conn.prepareStatement(updateFlowSql);
-                    flowStmt.setString(1, "已通过".equals(status) ? "已完成" : "已拒绝"); // 如果主申请通过，则当前步骤完成；否则拒绝
-                    flowStmt.setString(2, reviewerId);
-                    flowStmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-                    flowStmt.setString(4, reviewComment);
-                    flowStmt.setInt(5, applicationId);
-                    flowStmt.setInt(6, currentStepOrder);
-                    flowStmt.executeUpdate();
-                    flowStmt.close(); // 关闭 flowStmt
-                }
-
-                // 4. 如果是批准，尝试激活下一个流程步骤
-                if ("已通过".equals(status)) {
-                    String getNextFlowSql = "SELECT step_order FROM tbl_application_flow WHERE application_id = ? AND step_order > ? ORDER BY step_order LIMIT 1";
-                    nextFlowStmt = conn.prepareStatement(getNextFlowSql);
-                    nextFlowStmt.setInt(1, applicationId);
-                    nextFlowStmt.setInt(2, currentStepOrder);
-                    ResultSet nextRs = nextFlowStmt.executeQuery();
-                    if (nextRs.next()) {
-                        int nextStepOrder = nextRs.getInt("step_order");
-                        String activateNextFlowSql = "UPDATE tbl_application_flow SET status = '处理中' WHERE application_id = ? AND step_order = ?";
-                        PreparedStatement activateStmt = conn.prepareStatement(activateNextFlowSql); // 修改此处的变量名 activateNextNextFlowSql -> activateNextFlowSql
-                        activateStmt.setInt(1, applicationId);
-                        activateStmt.setInt(2, nextStepOrder);
-                        activateStmt.executeUpdate();
-                        activateStmt.close();
-                    }
-                    nextRs.close();
-                    nextFlowStmt.close(); // 关闭 nextFlowStmt
-                } else if ("已拒绝".equals(status)) {
-                    // 如果拒绝，可以将所有后续待处理的步骤都标记为“已拒绝”
-                    String rejectRemainingFlowSql = "UPDATE tbl_application_flow SET status = '已拒绝', handler_id = ?, handle_time = ?, comment = ? WHERE application_id = ? AND step_order > ? AND status = '待处理'";
-                    PreparedStatement rejectStmt = conn.prepareStatement(rejectRemainingFlowSql);
-                    rejectStmt.setString(1, reviewerId);
-                    rejectStmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-                    rejectStmt.setString(3, "上一步骤被拒绝，此步骤已作废。"); // 默认拒绝意见
-                    rejectStmt.setInt(4, applicationId);
-                    rejectStmt.setInt(5, currentStepOrder);
-                    rejectStmt.executeUpdate();
-                    rejectStmt.close();
-                }
-
-                conn.commit(); // 提交事务
-
-                // 发送系统消息通知申请人 (已存在)
+                // 发送系统消息通知申请人
                 sendNotificationToApplicant(applicationId, status, reviewComment);
                 return Message.success("申请" + status);
             } else {
-                conn.rollback(); // 如果主更新失败，回滚事务
-                return Message.error(Message.Code.NOT_FOUND, "申请不存在或更新失败");
+                return Message.error(Message.Code.NOT_FOUND, "申请不存在");
             }
 
         } catch (SQLException e) {
-            try {
-                if (conn != null) conn.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
             System.err.println("更新申请状态失败: " + e.getMessage());
             return Message.error(Message.Code.ERROR, "更新申请状态失败: " + e.getMessage());
         } finally {
-            try {
-                if (conn != null) conn.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            DatabaseHelper.closeResources(null, stmt, rs); // 确保关闭所有Statement和ResultSet
-            // flowStmt 和 nextFlowStmt 在各自逻辑块中已关闭
+            DatabaseHelper.closeResources(conn, stmt);
         }
     }
 
