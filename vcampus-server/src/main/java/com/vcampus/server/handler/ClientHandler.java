@@ -1,6 +1,7 @@
 package com.vcampus.server.handler;
 
 import com.vcampus.common.entity.Message;
+import com.vcampus.common.entity.Post;
 import com.vcampus.common.entity.User;
 import com.vcampus.server.VCampusServer;
 import com.vcampus.server.service.*;
@@ -8,6 +9,7 @@ import com.vcampus.server.service.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 客户端连接处理器
@@ -15,79 +17,63 @@ import java.util.Date;
  */
 public class ClientHandler implements Runnable {
 
-    private Socket clientSocket;
-    private String clientId;
-    private VCampusServer server;
+    private final Socket clientSocket;
+    private final String clientId;
+    private final VCampusServer server;
 
-    // 输入输出流
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
 
-    // 客户端状态
     private boolean isConnected = false;
     private User currentUser = null;
     private Date loginTime;
 
-    // 业务服务类
-    private UserService userService;
-    private StudentService studentService;
-    private CourseService courseService;
-    private LibraryService libraryService;
-    private ShopService shopService;
-    private AcademicService academicService;  // 新增教务系统服务
-    private FileService fileService;
-
+    // 业务服务
+    private final UserService userService;
+    private final StudentService studentService;
+    private final CourseService courseService;
+    private final LibraryService libraryService;
+    private final ShopService shopService;
+    private final AcademicService academicService;
+    private final PostService postService;
+    private final EnrollmentService enrollmentService;
 
     public ClientHandler(Socket clientSocket, String clientId, VCampusServer server) {
         this.clientSocket = clientSocket;
         this.clientId = clientId;
         this.server = server;
 
-        // 初始化业务服务
         this.userService = new UserService();
         this.studentService = new StudentService();
         this.courseService = new CourseService();
         this.libraryService = new LibraryService();
         this.shopService = new ShopService();
-        this.academicService = new AcademicService();  // 初始化教务服务
-        this.fileService = new FileService();
+        this.academicService = new AcademicService();
+        this.postService = new PostService();
+        this.enrollmentService = new EnrollmentService();
     }
 
     @Override
     public void run() {
         try {
-            // 初始化输入输出流
             outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-            inputStream = new ObjectInputStream(clientSocket.getInputStream());
+            inputStream  = new ObjectInputStream(clientSocket.getInputStream());
 
             isConnected = true;
             System.out.println("客户端 " + clientId + " 连接处理器启动");
 
-            // 发送欢迎消息
-            Message welcomeMessage = new Message(Message.Type.SUCCESS, "欢迎连接到VCampus服务器");
-            sendMessage(welcomeMessage);
+            sendMessage(new Message(Message.Type.SUCCESS, "欢迎连接到VCampus服务器"));
 
-            // 主消息处理循环
             while (isConnected) {
                 try {
-                    // 接收客户端消息
                     Message message = (Message) inputStream.readObject();
-
                     if (message != null) {
                         System.out.println("收到客户端消息: " + message);
-
-                        // 处理消息
                         Message response = processMessage(message);
-
-                        // 发送响应
-                        if (response != null) {
-                            sendMessage(response);
-                        }
+                        if (response != null) sendMessage(response);
                     }
-
                 } catch (EOFException e) {
-                    // 客户端正常断开连接
-                    break;
+                    break; // 正常断开
                 } catch (ClassNotFoundException e) {
                     System.err.println("消息反序列化失败: " + e.getMessage());
                     sendErrorMessage("消息格式错误");
@@ -98,7 +84,6 @@ public class ClientHandler implements Runnable {
                     break;
                 }
             }
-
         } catch (IOException e) {
             System.err.println("初始化客户端连接失败: " + e.getMessage());
         } finally {
@@ -106,25 +91,18 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    /**
-     * 处理客户端消息
-     */
+    /** 统一分发 */
     private Message processMessage(Message message) {
         try {
             Message.Type type = message.getType();
-
             switch (type) {
-                // 用户管理
-                case USER_LOGIN:
-                    return handleLogin(message);
-                case USER_LOGOUT:
-                    return handleLogout(message);
-                case USER_REGISTER:
-                    return handleRegister(message);
-                case USER_UPDATE:
-                    return handleUserUpdate(message);
+                // ===== 用户 =====
+                case USER_LOGIN:    return handleLogin(message);
+                case USER_LOGOUT:   return handleLogout(message);
+                case USER_REGISTER: return handleRegister(message);
+                case USER_UPDATE:   return handleUserUpdate(message);
 
-                // 学生管理
+                // ===== 学生 =====
                 case STUDENT_ADD:
                 case STUDENT_DELETE:
                 case STUDENT_UPDATE:
@@ -132,7 +110,7 @@ public class ClientHandler implements Runnable {
                 case STUDENT_LIST:
                     return handleStudentOperation(message);
 
-                // 课程管理
+                // ===== 课程 =====
                 case COURSE_ADD:
                 case COURSE_DELETE:
                 case COURSE_UPDATE:
@@ -142,28 +120,25 @@ public class ClientHandler implements Runnable {
                 case COURSE_DROP:
                     return handleCourseOperation(message);
 
-                // 图书馆管理
+                // ===== 图书馆 =====
                 case BOOK_SEARCH:
                 case BOOK_BORROW:
                 case BOOK_RETURN:
                 case BOOK_LIST:
                     return handleLibraryOperation(message);
 
-                // 商店管理
+                // ===== 商店 =====
                 case SHOP_LIST:
                 case SHOP_BUY:
                 case SHOP_CART:
                     return handleShopOperation(message);
 
-                // 教务系统 - 公告管理
+                // ===== 教务（公告/申请）=====
                 case ANNOUNCEMENT_LIST:
                 case ANNOUNCEMENT_DETAIL:
                 case ANNOUNCEMENT_ADD:
                 case ANNOUNCEMENT_UPDATE:
                 case ANNOUNCEMENT_DELETE:
-                    return handleAcademicOperation(message);
-
-                // 教务系统 - 申请管理
                 case APPLICATION_SUBMIT:
                 case APPLICATION_LIST:
                 case APPLICATION_DETAIL:
@@ -171,17 +146,23 @@ public class ClientHandler implements Runnable {
                 case APPLICATION_REJECT:
                     return handleAcademicOperation(message);
 
-                // 文件管理
-                case FILE_LIST:
-                case FILE_UPLOAD:
-                case FILE_DELETE:
-                case FILE_DOWNLOAD:
-                    return handleFileOperation(message);
+                // ===== 学籍管理（本次新增路由）=====
+                case ENROLLMENT_PROFILE_GET:
+                case ENROLLMENT_REQUEST_SUBMIT:
+                case ENROLLMENT_REQUEST_LIST:
+                case ENROLLMENT_REQUEST_DETAIL:
+                case ENROLLMENT_REQUEST_APPROVE:
+                case ENROLLMENT_REQUEST_REJECT:
+                    return handleEnrollmentOperation(message);
+
+                // ===== 论坛 =====
+                case POST_GET_ALL:
+                case POST_CREATE:
+                    return handleForumOperation(message);
 
                 default:
                     return createErrorMessage("不支持的操作类型: " + type);
             }
-
         } catch (Exception e) {
             System.err.println("处理消息时发生错误: " + e.getMessage());
             e.printStackTrace();
@@ -189,31 +170,22 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    /**
-     * 处理用户登录
-     */
+    // ====== 用户 ======
     private Message handleLogin(Message message) {
         if (message.getData() instanceof User) {
             User loginUser = (User) message.getData();
             User authenticatedUser = userService.login(loginUser.getUserId(), loginUser.getPassword());
-
             if (authenticatedUser != null) {
                 this.currentUser = authenticatedUser;
                 this.loginTime = new Date();
                 authenticatedUser.setLastLoginTime(loginTime);
-
                 System.out.println("用户登录成功: " + authenticatedUser.getDisplayName());
                 return createSuccessMessage(authenticatedUser);
-            } else {
-                return createErrorMessage("用户名或密码错误");
             }
+            return createErrorMessage("用户名或密码错误");
         }
         return createErrorMessage("登录数据格式错误");
     }
-
-    /**
-     * 处理用户登出
-     */
     private Message handleLogout(Message message) {
         if (currentUser != null) {
             System.out.println("用户登出: " + currentUser.getDisplayName());
@@ -223,118 +195,88 @@ public class ClientHandler implements Runnable {
         }
         return createErrorMessage("用户未登录");
     }
-
-    /**
-     * 处理用户注册
-     */
     private Message handleRegister(Message message) {
         if (message.getData() instanceof User) {
             User newUser = (User) message.getData();
-
             if (userService.register(newUser)) {
                 System.out.println("新用户注册: " + newUser.getUserId());
                 return createSuccessMessage("注册成功");
-            } else {
-                return createErrorMessage("用户ID已存在");
             }
+            return createErrorMessage("用户ID已存在");
         }
         return createErrorMessage("注册数据格式错误");
     }
-
-    /**
-     * 处理用户信息更新
-     */
     private Message handleUserUpdate(Message message) {
-        if (!isLoggedIn()) {
-            return createErrorMessage("请先登录");
-        }
-
+        if (!isLoggedIn()) return createErrorMessage("请先登录");
         if (message.getData() instanceof User) {
             User updateUser = (User) message.getData();
-
             if (userService.updateUser(updateUser)) {
-                // 如果更新的是当前用户，刷新currentUser
-                if (currentUser.getUserId().equals(updateUser.getUserId())) {
-                    currentUser = updateUser;
-                }
+                if (currentUser.getUserId().equals(updateUser.getUserId())) currentUser = updateUser;
                 return createSuccessMessage("更新成功");
-            } else {
-                return createErrorMessage("更新失败");
             }
+            return createErrorMessage("更新失败");
         }
         return createErrorMessage("更新数据格式错误");
     }
 
-    /**
-     * 处理学生管理相关操作
-     */
+    // ====== 学生/课程/图书/商店/教务 ======
     private Message handleStudentOperation(Message message) {
-        if (!isLoggedIn()) {
-            return createErrorMessage("请先登录");
-        }
-
-        // 检查权限（只有管理员和教师可以管理学生信息）
-        if (!currentUser.isAdmin() && !currentUser.isTeacher()) {
-            return createErrorMessage("权限不足");
-        }
-
+        if (!isLoggedIn()) return createErrorMessage("请先登录");
+        if (!currentUser.isAdmin() && !currentUser.isTeacher()) return createErrorMessage("权限不足");
         return studentService.handleRequest(message, currentUser);
     }
-
-    /**
-     * 处理课程管理相关操作
-     */
     private Message handleCourseOperation(Message message) {
-        if (!isLoggedIn()) {
-            return createErrorMessage("请先登录");
-        }
-
+        if (!isLoggedIn()) return createErrorMessage("请先登录");
         return courseService.handleRequest(message, currentUser);
     }
-
-    /**
-     * 处理图书馆相关操作
-     */
     private Message handleLibraryOperation(Message message) {
-        if (!isLoggedIn()) {
-            return createErrorMessage("请先登录");
-        }
-
+        if (!isLoggedIn()) return createErrorMessage("请先登录");
         return libraryService.handleRequest(message, currentUser);
     }
-
-    /**
-     * 处理商店相关操作
-     */
     private Message handleShopOperation(Message message) {
-        if (!isLoggedIn()) {
-            return createErrorMessage("请先登录");
-        }
-
+        if (!isLoggedIn()) return createErrorMessage("请先登录");
         return shopService.handleRequest(message, currentUser);
     }
-
-    /**
-     * 处理教务系统相关操作（新增）
-     */
     private Message handleAcademicOperation(Message message) {
-        if (!isLoggedIn()) {
-            return createErrorMessage("请先登录");
-        }
-
+        if (!isLoggedIn()) return createErrorMessage("请先登录");
         return academicService.handleRequest(message, currentUser);
     }
 
-    private Message handleFileOperation(Message message) {
-        if (!isLoggedIn()) {
-            return createErrorMessage("请先登录");
-        }
-        return fileService.handleRequest(message, currentUser);
+    // ====== 学籍（新增）=====
+    private Message handleEnrollmentOperation(Message message) {
+        if (!isLoggedIn()) return createErrorMessage("请先登录");
+        // 具体权限在 EnrollmentService 内部再校验（学生/教师/管理员）
+        return enrollmentService.handle(message, currentUser);
     }
 
-    /**
-     * 发送消息给客户端
-     */
+    // ====== 论坛 ======
+    private Message handleForumOperation(Message message) {
+        if (!isLoggedIn()) return createErrorMessage("请先登录再访问论坛");
+
+        Message.Type type = message.getType();
+        Message response = new Message();
+        switch (type) {
+            case POST_GET_ALL: {
+                List<Post> posts = postService.getAllPosts();
+                response.setType(Message.Type.POST_GET_ALL_SUCCESS);
+                response.setData(posts);
+                return response;
+            }
+            case POST_CREATE: {
+                Post postToCreate = (Post) message.getData();
+                postToCreate.setAuthorName(currentUser.getRealName());
+                boolean success = postService.addPost(postToCreate);
+                response.setData(success);
+                response.setType(success ? Message.Type.POST_CREATE_SUCCESS
+                        : Message.Type.POST_CREATE_FAILURE);
+                return response;
+            }
+            default:
+                return createErrorMessage("不支持的论坛操作类型: " + type);
+        }
+    }
+
+    // ====== 基础通用 ======
     public boolean sendMessage(Message message) {
         try {
             if (outputStream != null && isConnected) {
@@ -348,24 +290,10 @@ public class ClientHandler implements Runnable {
         }
         return false;
     }
-
-    /**
-     * 发送错误消息
-     */
     private void sendErrorMessage(String errorMsg) {
         sendMessage(createErrorMessage(errorMsg));
     }
-
-    /**
-     * 检查用户是否已登录
-     */
-    private boolean isLoggedIn() {
-        return currentUser != null;
-    }
-
-    /**
-     * 创建成功消息
-     */
+    private boolean isLoggedIn() { return currentUser != null; }
     private Message createSuccessMessage(Object data) {
         Message message = new Message();
         message.setType(Message.Type.SUCCESS);
@@ -373,10 +301,6 @@ public class ClientHandler implements Runnable {
         message.setData(data);
         return message;
     }
-
-    /**
-     * 创建错误消息
-     */
     private Message createErrorMessage(String errorMsg) {
         Message message = new Message();
         message.setType(Message.Type.ERROR);
@@ -385,46 +309,25 @@ public class ClientHandler implements Runnable {
         return message;
     }
 
-    /**
-     * 断开连接
-     */
     public void disconnect() {
         if (isConnected) {
             isConnected = false;
-
             try {
                 if (inputStream != null) inputStream.close();
                 if (outputStream != null) outputStream.close();
-                if (clientSocket != null && !clientSocket.isClosed()) {
-                    clientSocket.close();
-                }
+                if (clientSocket != null && !clientSocket.isClosed()) clientSocket.close();
             } catch (IOException e) {
                 System.err.println("关闭连接时发生错误: " + e.getMessage());
             }
-
-            // 从服务器中移除此客户端
             server.removeClient(clientId);
-
             if (currentUser != null) {
                 System.out.println("用户 " + currentUser.getDisplayName() + " 断开连接");
             }
         }
     }
 
-    // Getter方法
-    public String getClientId() {
-        return clientId;
-    }
-
-    public User getCurrentUser() {
-        return currentUser;
-    }
-
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    public Date getLoginTime() {
-        return loginTime;
-    }
+    public String getClientId() { return clientId; }
+    public User getCurrentUser() { return currentUser; }
+    public boolean isConnected() { return isConnected; }
+    public Date getLoginTime() { return loginTime; }
 }
