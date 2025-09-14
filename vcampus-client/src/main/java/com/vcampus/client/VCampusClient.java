@@ -154,7 +154,7 @@ public class VCampusClient extends Application {
         loginButton.setOnAction(e -> handleLogin());
 
         // 注册按钮
-        registerButton = createStyledButton("注册新用户", "login-button");
+        registerButton = createStyledButton("注册新用户", "register-button");
         registerButton.setOnAction(e -> showRegisterDialog());
 
         // 状态标签
@@ -164,8 +164,9 @@ public class VCampusClient extends Application {
         statusLabel.setAlignment(Pos.CENTER);
 
         // 版本信息
-        Label versionLabel = new Label("Version 1.0 | ©2025 VCampus");
+        Label versionLabel = new Label("Version 1.0 | ©2024 VCampus");
         versionLabel.setFont(Font.font("Microsoft YaHei", 10));
+        // versionLabel.setTextFill(Color.valueOf("#999999")); // 已注释，由CSS控制
         versionLabel.getStyleClass().add("version-label"); // 新增CSS类
 
         card.getChildren().addAll(
