@@ -10,14 +10,18 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -515,50 +519,104 @@ public class LifeService extends BorderPane {
         VBox container = new VBox(20);
         container.setAlignment(Pos.TOP_CENTER);
         container.setPadding(new Insets(20));
-        container.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 5);");
+        container.setStyle("-fx-background-color: #f0f2f5;");
+
+        // 设置容器扩展属性
+        VBox.setVgrow(container, Priority.ALWAYS);
 
         // 标题
         Label titleLabel = new Label("一卡通服务");
-        titleLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 22));
+        titleLabel.setFont(Font.font("微软雅黑", FontWeight.BOLD, 34));
         titleLabel.setTextFill(Color.web("#2c3e50"));
         titleLabel.setPadding(new Insets(0, 0, 20, 0));
+        titleLabel.setStyle("-fx-font: 微软雅黑; -fx-font-weight: BOLD; -fx-font-size: 36px; -fx-text-alignment: center;");
+
         container.getChildren().add(titleLabel);
 
         // 创建主容器，使用HBox实现左右布局
         HBox mainContainer = new HBox(30);
         mainContainer.setAlignment(Pos.TOP_CENTER);
         mainContainer.setPadding(new Insets(20));
-        mainContainer.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 10;");
+        mainContainer.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 5);");
 
-        // 左侧用户信息面板
+        // 设置主容器扩展属性
+        VBox.setVgrow(mainContainer, Priority.ALWAYS);
+        HBox.setHgrow(mainContainer, Priority.ALWAYS);
+
+        // 左侧用户信息面板 - 增加占比
         VBox userInfoPanel = createUserInfoPanel();
-        userInfoPanel.setPrefWidth(300);
-        userInfoPanel.setMaxWidth(300);
+        HBox.setHgrow(userInfoPanel, Priority.ALWAYS); // 允许水平扩展
+        userInfoPanel.setMaxWidth(Double.MAX_VALUE); // 允许扩展到最大宽度
 
-        // 右侧功能面板
+        // 右侧功能面板 - 减少占比
         VBox functionPanel = new VBox(20);
         functionPanel.setAlignment(Pos.TOP_CENTER);
-        functionPanel.setPadding(new Insets(0, 0, 0, 0));
-        HBox.setHgrow(functionPanel, Priority.ALWAYS);
+        functionPanel.setPadding(new Insets(20));
+        functionPanel.setMaxWidth(500); // 限制功能面板的最大宽度
+        HBox.setHgrow(functionPanel, Priority.SOMETIMES); // 减少扩展优先级
+
+        // 功能选项标题
+        Label functionTitle = new Label("服务功能");
+        functionTitle.setFont(Font.font("微软雅黑", FontWeight.BOLD, 36));
+        functionTitle.setTextFill(Color.web("#2c3e50"));
+        functionPanel.getChildren().add(functionTitle);
+        functionTitle.setStyle("-fx-font: 微软雅黑; -fx-font-weight: BOLD; -fx-font-size: 36px; -fx-text-alignment: center;");
+
 
         // 功能选项 - 使用网格布局
         GridPane optionsGrid = new GridPane();
         optionsGrid.setAlignment(Pos.CENTER);
-        optionsGrid.setHgap(20);
-        optionsGrid.setVgap(15);
-        optionsGrid.setPadding(new Insets(10));
+        optionsGrid.setHgap(30);
+        optionsGrid.setVgap(25);
+        optionsGrid.setPadding(new Insets(20));
 
-        // 添加功能按钮 - 使用2x2网格布局
-        optionsGrid.add(createFunctionOption("充值", "为一卡通账户充值", "#4CAF50", null), 0, 0);
-        optionsGrid.add(createFunctionOption("账单", "查看消费记录", "#2196F3", null), 1, 0);
-        optionsGrid.add(createFunctionOption("挂失", "挂失或解挂一卡通", "#FF9800", null), 0, 1);
-        optionsGrid.add(createFunctionOption("余额查询", "查询当前余额", "#9C27B0", null), 1, 1);
+        // 设置网格布局扩展属性
+        GridPane.setHgrow(optionsGrid, Priority.ALWAYS);
+
+        // 创建功能选项并设置扩展属性
+        VBox rechargeOption = createFunctionOption("充值", "为一卡通账户充值", "#4CAF50", "💰");
+        VBox billOption = createFunctionOption("账单", "查看消费记录", "#2196F3", "\uD83D\uDCD1");
+        VBox lossOption = createFunctionOption("挂失", "挂失或解挂一卡通", "#FF9800", "\uD83D\uDCB8");
+        VBox settingsOption = createFunctionOption("设置", "卡片相关设置", "#607D8B", "⚙");
+
+        // 设置功能选项的最小尺寸
+        rechargeOption.setMinSize(200, 140);
+        billOption.setMinSize(200, 140);
+        lossOption.setMinSize(200, 140);
+        settingsOption.setMinSize(200, 140);
+
+        optionsGrid.add(rechargeOption, 0, 0);
+        optionsGrid.add(billOption, 1, 0);
+        optionsGrid.add(lossOption, 0, 1);
+        optionsGrid.add(settingsOption, 1, 1);
+
+        optionsGrid.setHgap(40);  // 增加水平间隙
+        optionsGrid.setVgap(30);  // 增加垂直间隙
+        optionsGrid.setPadding(new Insets(30));
+
+
+        // 添加功能选项的点击事件
+        rechargeOption.setOnMouseClicked(e -> showRechargeDialog());
+        billOption.setOnMouseClicked(e -> showConsumptionRecords());
+        lossOption.setOnMouseClicked(e -> showReportLossDialog());
+        settingsOption.setOnMouseClicked(e -> refreshCardInfo());
 
         functionPanel.getChildren().add(optionsGrid);
 
-        // 将左右面板添加到主容器
+        // 将左右面板添加到主容器 - 调整比例
         mainContainer.getChildren().addAll(userInfoPanel, functionPanel);
-        HBox.setHgrow(mainContainer, Priority.ALWAYS);
+
+        // 设置用户信息面板和功能面板的比例为3:2
+        HBox.setHgrow(userInfoPanel, Priority.ALWAYS);
+        HBox.setHgrow(functionPanel, Priority.ALWAYS);
+        userInfoPanel.setMaxWidth(Region.USE_COMPUTED_SIZE);
+        functionPanel.setMaxWidth(Region.USE_COMPUTED_SIZE);
+        mainContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() > 0) {
+                userInfoPanel.setPrefWidth(newVal.doubleValue() * 0.6); // 用户信息面板占60%
+                functionPanel.setPrefWidth(newVal.doubleValue() * 0.4); // 功能面板占40%
+            }
+        });
 
         // 将主容器添加到容器
         container.getChildren().add(mainContainer);
@@ -568,45 +626,74 @@ public class LifeService extends BorderPane {
     }
 
     private VBox createUserInfoPanel() {
-        VBox panel = new VBox(15);
+        VBox panel = new VBox(20);
         panel.setAlignment(Pos.TOP_CENTER);
-        panel.setPadding(new Insets(20, 15, 20, 15));
-        panel.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);");
+        panel.setPadding(new Insets(30, 25, 30, 25));
+        panel.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 3);");
 
-        // 从数据库获取一卡通信息
+        VBox.setVgrow(panel, Priority.ALWAYS);
+
+
         CardInfo cardInfo = clientService.getCardInfo(currentUser.getUserId());
 
-        // 用户头像
+        // 用户头像 - 使用实际图片
         StackPane avatarContainer = new StackPane();
-        avatarContainer.setPrefSize(80, 80);
-        avatarContainer.setStyle("-fx-background-color: #3498db; -fx-background-radius: 40;");
+        avatarContainer.setPrefSize(120, 120);
 
-        Label avatarLabel = new Label("图片");
-        avatarLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 24));
-        avatarLabel.setTextFill(Color.WHITE);
+        // 创建圆形头像
+        Circle clip = new Circle(60, 60, 60);
 
-        avatarContainer.getChildren().add(avatarLabel);
+        ImageView avatarView = new ImageView();
+        try {
+            // 使用本地图片路径，如果没有则使用默认图标
+            InputStream imageStream = getClass().getResourceAsStream("/images/profilePic.jpg");
+            if (imageStream != null) {
+                Image avatarImage = new Image(imageStream);
+                avatarView.setImage(avatarImage);
+                avatarView.setFitWidth(120);
+                avatarView.setFitHeight(120);
+                avatarView.setClip(clip);
+                avatarContainer.getChildren().add(avatarView);
+                avatarContainer.setStyle("-fx-background-color: linear-gradient(to bottom right, #3498db, #2c3e50); -fx-background-radius: 60;");
+            } else {
+                throw new Exception("Image not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 如果图片加载失败，使用默认图形
+            Label avatarLabel = new Label("头像");
+            avatarLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 18));
+            avatarLabel.setTextFill(Color.WHITE);
+            avatarContainer.getChildren().add(avatarLabel);
+            avatarContainer.setStyle("-fx-background-color: linear-gradient(to bottom right, #3498db, #2c3e50); -fx-background-radius: 60;");
+        }
+
 
         // 用户姓名 - 从当前用户获取
         Label nameLabel = new Label(currentUser.getDisplayName());
-        nameLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 18));
+        nameLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 30));
         nameLabel.setTextFill(Color.web("#2c3e50"));
 
         // 学号 - 从当前用户获取
         Label idLabel = new Label("学号: " + currentUser.getUserId());
-        idLabel.setFont(Font.font("Microsoft YaHei", 14));
+        idLabel.setFont(Font.font("Microsoft YaHei", 28));
         idLabel.setTextFill(Color.web("#7f8c8d"));
+
+        // 院系信息
+        Label deptLabel = new Label("院系： " + currentUser.getDepartment());
+        deptLabel.setFont(Font.font("Microsoft YaHei", 28));
+        deptLabel.setTextFill(Color.web("#7f8c8d"));
 
         // 分隔线
         Separator separator = new Separator();
-        separator.setPadding(new Insets(10, 0, 10, 0));
+        separator.setPadding(new Insets(15, 0, 15, 0));
 
-        // 卡片余额 - 从数据库获取
+        // 卡片余额
         VBox balanceBox = new VBox(5);
         balanceBox.setAlignment(Pos.CENTER);
 
         Label balanceTitle = new Label("当前余额");
-        balanceTitle.setFont(Font.font("Microsoft YaHei", 14));
+        balanceTitle.setFont(Font.font("Microsoft YaHei", 28));
         balanceTitle.setTextFill(Color.web("#7f8c8d"));
 
         // 保存余额标签为成员变量，以便后续更新
@@ -622,7 +709,7 @@ public class LifeService extends BorderPane {
 
         // 保存状态标签为成员变量，以便后续更新
         statusLabel = new Label("状态: " + (cardInfo != null ? getStatusText(cardInfo.getStatus()) : "未知"));
-        statusLabel.setFont(Font.font("Microsoft YaHei", 14));
+        statusLabel.setFont(Font.font("Microsoft YaHei", 28));
 
         // 根据状态设置不同颜色
         if (cardInfo != null && "NORMAL".equals(cardInfo.getStatus())) {
@@ -635,9 +722,53 @@ public class LifeService extends BorderPane {
 
         statusBox.getChildren().add(statusLabel);
 
-        panel.getChildren().addAll(avatarContainer, nameLabel, idLabel, separator, balanceBox, statusBox);
+        panel.getChildren().addAll(avatarContainer, nameLabel, idLabel, deptLabel, separator, balanceBox, statusBox);
 
         return panel;
+    }
+
+    private VBox createFunctionOption(String title, String description, String color, String emoji) {
+        VBox optionBox = new VBox(8);
+        optionBox.setAlignment(Pos.CENTER);
+        optionBox.setPadding(new Insets(15));
+        optionBox.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 3);");
+        optionBox.setMinSize(200, 140);  // 增加最小尺寸
+        optionBox.setPrefSize(220, 160); // 增加首选尺寸
+
+        // 功能图标
+        Label iconLabel = new Label(emoji);
+        iconLabel.setFont(Font.font(34));
+        iconLabel.setTextFill(Color.WHITE);
+        iconLabel.setStyle("-fx-font-size: 34px; -fx-text-alignment: center;");
+
+        // 功能标题
+        Label titleLabel = new Label(title);
+        titleLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 28));
+        titleLabel.setTextFill(Color.WHITE);
+        titleLabel.setStyle("-fx-font-size: 28px; -fx-text-alignment: center;");
+
+        // 功能描述
+        Label descLabel = new Label(description);
+        descLabel.setFont(Font.font("Microsoft YaHei", FontWeight.NORMAL, 16));
+        descLabel.setTextFill(Color.WHITE);
+        descLabel.setWrapText(true);
+        descLabel.setAlignment(Pos.CENTER);
+        descLabel.setMaxWidth(180);
+        descLabel.setStyle("-fx-font-size: 16px; -fx-text-alignment: center;");
+
+        optionBox.getChildren().addAll(iconLabel, titleLabel, descLabel);
+
+        // 添加悬停效果
+        optionBox.setOnMouseEntered(e -> {
+            optionBox.setStyle("-fx-background-color: derive(" + color + ", -20%); -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 4);");
+            optionBox.setCursor(javafx.scene.Cursor.HAND);
+        });
+
+        optionBox.setOnMouseExited(e -> {
+            optionBox.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 3);");
+        });
+
+        return optionBox;
     }
 
     // 创建后勤报修服务容器
@@ -645,6 +776,7 @@ public class LifeService extends BorderPane {
         VBox container = new VBox(20);
         container.setAlignment(Pos.TOP_CENTER);
         container.setPadding(new Insets(20));
+        // 修改容器背景为白色
         container.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 5);");
 
         // 标题
@@ -656,15 +788,15 @@ public class LifeService extends BorderPane {
 
         // 创建上下分栏布局
         VBox mainContainer = new VBox(20);
-        mainContainer.setFillWidth(true); // 允许宽度填充
-
-        // 统计栏和申请按钮容器 - 修改为使用BorderPane实现左右布局
+        mainContainer.setFillWidth(true);
+        // 确保主容器背景为白色
+        mainContainer.setStyle("-fx-background-color: white;");
         BorderPane topContainer = new BorderPane();
         topContainer.setPadding(new Insets(0, 0, 10, 0));
 
         // 统计栏 - 修改为居中显示
         HBox statsContainer = createRepairStats();
-        statsContainer.setAlignment(Pos.CENTER); // 确保统计栏内容居中
+        statsContainer.setAlignment(Pos.CENTER);
         BorderPane.setAlignment(statsContainer, Pos.CENTER);
         topContainer.setCenter(statsContainer);
 
@@ -698,14 +830,20 @@ public class LifeService extends BorderPane {
         // 报修记录选项卡
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        // 修改选项卡背景为白色
+        tabPane.setStyle("-fx-background-color: white;");
 
         // 待处理报修选项卡
         Tab pendingTab = new Tab("待处理");
+        // 修改选项卡内容背景为白色
         pendingTab.setContent(createRepairList(true));
+        pendingTab.setStyle("-fx-background-color: white;");
 
         // 已处理报修选项卡
         Tab completedTab = new Tab("已处理");
+        // 修改选项卡内容背景为白色
         completedTab.setContent(createRepairList(false));
+        completedTab.setStyle("-fx-background-color: white;");
 
         tabPane.getTabs().addAll(pendingTab, completedTab);
         VBox.setVgrow(tabPane, Priority.ALWAYS); // 允许选项卡区域扩展
@@ -715,7 +853,8 @@ public class LifeService extends BorderPane {
         ScrollPane scrollPane = new ScrollPane(mainContainer);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true); // 允许高度适应
-        scrollPane.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+        // 修改滚动面板背景为白色
+        scrollPane.setStyle("-fx-background-color: white; -fx-border-color: transparent;");
 
         // 设置容器扩展属性
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
@@ -1197,6 +1336,7 @@ public class LifeService extends BorderPane {
     private ScrollPane createRepairList(boolean isPending) {
         VBox listContainer = new VBox(10);
         listContainer.setPadding(new Insets(10));
+        listContainer.setStyle("-fx-background-color: white;");
 
         // 筛选对应状态的报修记录
         List<RepairRecord> filteredRecords = new ArrayList<>();
@@ -1229,7 +1369,7 @@ public class LifeService extends BorderPane {
         ScrollPane scrollPane = new ScrollPane(listContainer);
         scrollPane.setFitToWidth(true);
         scrollPane.setPrefHeight(250);
-        scrollPane.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+        scrollPane.setStyle("-fx-background-color: white;");
 
         return scrollPane;
     }
@@ -1412,59 +1552,6 @@ public class LifeService extends BorderPane {
         dialog.showAndWait();
     }
 
-    private HBox createFunctionOption(String title, String description, String color, String emoji) {
-        HBox option = new HBox(15);
-        option.setAlignment(Pos.CENTER_LEFT);
-        option.setPadding(new Insets(15, 20, 15, 20));
-        option.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 10;");
-        option.setPrefWidth(250);
-
-        // 彩色标识
-        Rectangle colorIndicator = new Rectangle(8, 40);
-        colorIndicator.setFill(Color.web(color));
-        colorIndicator.setArcWidth(10);
-        colorIndicator.setArcHeight(10);
-
-        // 文本内容
-        VBox textContainer = new VBox(5);
-
-        Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
-        titleLabel.setTextFill(Color.web("#2c3e50"));
-
-        Label descLabel = new Label(description);
-        descLabel.setFont(Font.font("Microsoft YaHei", 13));
-        descLabel.setTextFill(Color.web("#7f8c8d"));
-
-        textContainer.getChildren().addAll(titleLabel, descLabel);
-
-        // 添加悬停效果
-        option.setOnMouseEntered(e -> {
-            option.setStyle("-fx-background-color: #e8f4fc; -fx-background-radius: 10; -fx-cursor: hand;");
-        });
-
-        option.setOnMouseExited(e -> {
-            option.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 10;");
-        });
-
-        // 根据标题添加不同的点击事件
-        option.setOnMouseClicked(e -> {
-            if (title.equals("充值")) {
-                showRechargeDialog();
-            } else if (title.equals("账单")) {
-                showConsumptionRecords();
-            } else if (title.equals("挂失")) {
-                showReportLossDialog();
-            } else if (title.equals("余额查询")) {
-                refreshCardInfo();
-            }
-        });
-
-        option.getChildren().addAll(colorIndicator, textContainer);
-
-        return option;
-    }
-
     private void showCardService() {
         // 显示一卡通服务容器
         cardServiceContainer.setVisible(true);
@@ -1479,8 +1566,13 @@ public class LifeService extends BorderPane {
             updateConsumptionUI(consumptions);
         }
 
+        refreshCardInfo();
+
         // 将一卡通服务容器放置在中心区域（占用整个下方）
         this.setCenter(cardServiceContainer);
+
+        VBox.setVgrow(cardServiceContainer, Priority.ALWAYS); // 新增
+        HBox.setHgrow(cardServiceContainer, Priority.ALWAYS); // 新增
 
         // 添加淡入动画
         FadeTransition fadeIn = new FadeTransition(Duration.millis(300), cardServiceContainer);
