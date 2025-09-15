@@ -369,6 +369,7 @@ public class Message implements Serializable {
         ONLINE_CLASS_GET_TEACHER_COURSE_NAMES,
         ONLINE_CLASS_SEARCH_TEACHER_COURSES,
         ONLINE_CLASS_GET_CLASS_NAMES,
+        ONLINE_CLASS_GET_ASSIGNMENT_FEEDBACK,
 
 //生活服务
         CARD_GET_INFO,

@@ -268,8 +268,9 @@ public class StudentOnlineClass extends BorderPane {
         header.setAlignment(Pos.CENTER_LEFT);
 
         Label title = new Label("在线课堂");
-        title.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 24));
+        title.setFont(Font.font("微软雅黑", FontWeight.BOLD, 30));
         title.setTextFill(Color.WHITE);
+        title.setStyle("-fx-font: 微软雅黑; -fx-font-weight: BOLD; -fx-font-size: 30px; -fx-text-alignment: center;");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -296,7 +297,7 @@ public class StudentOnlineClass extends BorderPane {
         HBox welcomeBox = new HBox(10);
         welcomeBox.setAlignment(Pos.CENTER_LEFT);
         Label welcomeLabel = new Label("欢迎使用在线课堂！");
-        welcomeLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 20));
+        welcomeLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 28px; -fx-text-fill: #2c3e50;");
         welcomeBox.getChildren().add(welcomeLabel);
 
         // 快速入口卡片
@@ -312,7 +313,7 @@ public class StudentOnlineClass extends BorderPane {
         // 最近活动
         VBox recentActivity = new VBox(10);
         Label activityLabel = new Label("最近活动");
-        activityLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        activityLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 22px; -fx-text-fill: #2c3e50;");
 
         ListView<String> activityList = new ListView<>();
         try {
@@ -322,13 +323,19 @@ public class StudentOnlineClass extends BorderPane {
             e.printStackTrace();
             activityList.getItems().add("加载活动失败: " + e.getMessage());
         }
-        activityList.setPrefHeight(120);
+
+        // 修改1: 设置活动列表为可调整大小
+        activityList.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        activityList.setStyle("-fx-font-size: 18px;");
+        VBox.setVgrow(activityList, Priority.ALWAYS);
 
         recentActivity.getChildren().addAll(activityLabel, activityList);
+        VBox.setVgrow(recentActivity, Priority.ALWAYS);
 
         homePage.getChildren().addAll(welcomeBox, quickAccess, recentActivity);
+        VBox.setVgrow(recentActivity, Priority.ALWAYS);
         this.setCenter(homePage);
-        this.setLeft(null); // 移除左侧导航
+        this.setLeft(null);
     }
 
     private VBox createQuickAccessCard(String title, String description, String emoji, EventHandler<ActionEvent> action) {
@@ -339,17 +346,16 @@ public class StudentOnlineClass extends BorderPane {
         card.setAlignment(Pos.CENTER);
 
         Label emojiLabel = new Label(emoji);
-        emojiLabel.setFont(Font.font(24));
+        emojiLabel.setStyle("-fx-font-size: 24px;");
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        titleLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 24px; -fx-text-fill: #2c3e50;");
 
         Label descLabel = new Label(description);
-        descLabel.setFont(Font.font(12));
-        descLabel.setTextFill(Color.GRAY);
+        descLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-size: 18px; -fx-text-fill: #7f8c8d;");
 
         Button enterBtn = new Button("进入");
-        enterBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;");
+        enterBtn.setStyle("-fx-font-size: 18px; -fx-background-color: #3498db; -fx-text-fill: white;");
         enterBtn.setOnAction(action);
 
         card.getChildren().addAll(emojiLabel, titleLabel, descLabel, enterBtn);
@@ -375,41 +381,45 @@ public class StudentOnlineClass extends BorderPane {
 
         VBox schedulePage = new VBox(20);
         schedulePage.setPadding(new Insets(20));
-        schedulePage.setStyle("-fx-background-color: #ecf0f1;");
+        schedulePage.setStyle("-fx-background-color: white;");
 
         // 日历和日程区域
         HBox mainContent = new HBox(20);
         mainContent.setAlignment(Pos.TOP_CENTER);
 
-        // 日历部分
+        // 日历部分 - 修改2: 增大日历区域
         VBox calendarSection = new VBox(10);
-        calendarSection.setPrefWidth(400);
+        calendarSection.setPrefWidth(600);
         calendarSection.setAlignment(Pos.TOP_CENTER);
+        calendarSection.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
 
         // 月份标签和导航
         Label monthLabel = new Label(currentCalendarDate.getYear() + "年 " + currentCalendarDate.getMonthValue() + "月");
-        monthLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 18));
+        monthLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 28px; -fx-text-fill: #2c3e50;");
 
         HBox monthNav = new HBox(10);
         monthNav.setAlignment(Pos.CENTER);
         Button prevMonth = new Button("上月");
         Button todayBtn = new Button("今天");
         Button nextMonth = new Button("下月");
+        prevMonth.setStyle("-fx-font-family: '微软雅黑'; -fx-font-size: 18px; -fx-background-color: #3498db; -fx-text-fill: white;");
+        todayBtn.setStyle("-fx-font-family: '微软雅黑'; -fx-font-size: 18px; -fx-background-color: #2ecc71; -fx-text-fill: white;");
+        nextMonth.setStyle("-fx-font-family: '微软雅黑'; -fx-font-size: 18px; -fx-background-color: #3498db; -fx-text-fill: white;");
 
         // 月份导航按钮事件
         prevMonth.setOnAction(e -> {
             currentCalendarDate = currentCalendarDate.minusMonths(1);
-            showSchedulePage(); // 重新加载页面
+            showSchedulePage();
         });
 
         nextMonth.setOnAction(e -> {
             currentCalendarDate = currentCalendarDate.plusMonths(1);
-            showSchedulePage(); // 重新加载页面
+            showSchedulePage();
         });
 
         todayBtn.setOnAction(e -> {
             currentCalendarDate = LocalDate.now();
-            showSchedulePage(); // 重新加载页面
+            showSchedulePage();
         });
 
         monthNav.getChildren().addAll(prevMonth, todayBtn, nextMonth);
@@ -420,30 +430,33 @@ public class StudentOnlineClass extends BorderPane {
 
         // 日程详情部分
         VBox scheduleDetail = createScheduleDetail();
+        scheduleDetail.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
+
         mainContent.getChildren().addAll(calendarSection, scheduleDetail);
         schedulePage.getChildren().add(mainContent);
 
-
         this.setCenter(schedulePage);
-        this.setLeft(null); // 移除左侧导航
+        this.setLeft(null);
     }
+
 
     /**
      * 创建日历网格
      */
     private GridPane createCalendarGrid(LocalDate date) {
         GridPane calendarGrid = new GridPane();
-        calendarGrid.setHgap(5);
-        calendarGrid.setVgap(5);
+        calendarGrid.setHgap(10);
+        calendarGrid.setVgap(10);
         calendarGrid.setAlignment(Pos.CENTER);
+        calendarGrid.setPadding(new Insets(10));
 
         // 添加星期标题
         String[] days = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
         for (int i = 0; i < 7; i++) {
             Label dayLabel = new Label(days[i]);
             dayLabel.setAlignment(Pos.CENTER);
-            dayLabel.setPrefSize(40, 30);
-            dayLabel.setStyle("-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6;");
+            dayLabel.setPrefSize(60, 40);
+            dayLabel.setStyle("-fx-font-size: 18px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;");
             calendarGrid.add(dayLabel, i, 0);
         }
 
@@ -452,7 +465,7 @@ public class StudentOnlineClass extends BorderPane {
         int daysInMonth = date.lengthOfMonth();
 
         // 计算第一天是星期几 (0=周日, 1=周一, ..., 6=周六)
-        int dayOfWeek = firstDayOfMonth.getDayOfWeek().getValue() % 7; // Java的DayOfWeek是1=周一,7=周日
+        int dayOfWeek = firstDayOfMonth.getDayOfWeek().getValue() % 7;
 
         // 填充日历
         int day = 1;
@@ -461,7 +474,7 @@ public class StudentOnlineClass extends BorderPane {
                 if ((week == 1 && d < dayOfWeek) || day > daysInMonth) {
                     // 添加空单元格
                     StackPane emptyCell = new StackPane();
-                    emptyCell.setPrefSize(40, 40);
+                    emptyCell.setPrefSize(60, 60);
                     calendarGrid.add(emptyCell, d, week);
                 } else {
                     // 添加日期单元格
@@ -475,13 +488,14 @@ public class StudentOnlineClass extends BorderPane {
         return calendarGrid;
     }
 
+
     /**
      * 创建日期单元格
      */
     private StackPane createDayCell(int day) {
         StackPane dayCell = new StackPane();
-        dayCell.setPrefSize(40, 40);
-        dayCell.setStyle("-fx-border-color: #bdc3c7; -fx-border-radius: 3;");
+        dayCell.setPrefSize(60, 60);
+        dayCell.setStyle("-fx-border-color: #bdc3c7; -fx-border-radius: 5;");
 
         // 检查这一天是否有提醒
         boolean hasReminder = daysWithReminders.contains(day);
@@ -493,7 +507,9 @@ public class StudentOnlineClass extends BorderPane {
                 day == today.getDayOfMonth();
 
         if (isToday) {
-            dayCell.setStyle("-fx-background-color: #3498db; -fx-border-radius: 3;");
+            dayCell.setStyle("-fx-background-color: #3498db; -fx-background-radius: 5;");
+        } else if (hasReminder) {
+            dayCell.setStyle("-fx-background-color: #fff9c4; -fx-background-radius: 5;");
         }
 
         VBox content = new VBox(2);
@@ -501,14 +517,19 @@ public class StudentOnlineClass extends BorderPane {
 
         Label dateLabel = new Label(String.valueOf(day));
         dateLabel.setAlignment(Pos.CENTER);
+        dateLabel.setStyle("-fx-font-size: 18px;");
 
         if (isToday) {
             dateLabel.setTextFill(Color.WHITE);
+            dateLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: BOLD;");
+        } else if (hasReminder) {
+            dateLabel.setTextFill(Color.DARKBLUE);
+            dateLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: BOLD;");
         }
 
         // 如果有提醒，添加提醒标记
         if (hasReminder) {
-            Circle reminderDot = new Circle(3);
+            Circle reminderDot = new Circle(4);
             reminderDot.setFill(Color.RED);
             content.getChildren().addAll(dateLabel, reminderDot);
         } else {
@@ -519,7 +540,6 @@ public class StudentOnlineClass extends BorderPane {
 
         // 添加点击事件
         dayCell.setOnMouseClicked(e -> {
-            // 更新日程详情为选中日期的内容
             updateScheduleDetail(day);
         });
 
@@ -533,6 +553,7 @@ public class StudentOnlineClass extends BorderPane {
         // 更新详情标签
         detailLabel.setText(currentCalendarDate.getYear() + "年" +
                 currentCalendarDate.getMonthValue() + "月" + day + "日的日程");
+        detailLabel.setStyle("-fx-font: 微软雅黑; -fx-font-weight: BOLD; -fx-font-size: 28px; -fx-text-alignment: center;");
 
         // 获取选中日期的提醒
         try {
@@ -563,7 +584,7 @@ public class StudentOnlineClass extends BorderPane {
         detailLabel = new Label(currentCalendarDate.getYear() + "年" +
                 currentCalendarDate.getMonthValue() + "月" +
                 currentCalendarDate.getDayOfMonth() + "日的日程");
-        detailLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        detailLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 24px; -fx-text-fill: #2c3e50;");
 
         scheduleList = new ListView<>();
         try {
@@ -581,19 +602,25 @@ public class StudentOnlineClass extends BorderPane {
             e.printStackTrace();
             scheduleList.getItems().add("加载提醒失败: " + e.getMessage());
         }
-        scheduleList.setPrefHeight(150);
+        scheduleList.setPrefHeight(200);
+        scheduleList.setStyle("-fx-font-size: 16px;");
 
         // 添加提醒表单
         VBox addReminderForm = new VBox(10);
         Label addReminderLabel = new Label("添加新提醒");
+        addReminderLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 20px; -fx-text-fill: #2c3e50;");
+
         TextField reminderContentField = new TextField();
         reminderContentField.setPromptText("提醒内容");
+        reminderContentField.setStyle("-fx-font-size: 16px;");
+
         DatePicker reminderDatePicker = new DatePicker();
-        reminderDatePicker.setValue(currentCalendarDate); // 默认选择当前日历日期
+        reminderDatePicker.setValue(currentCalendarDate);
         reminderDatePicker.setPromptText("选择日期");
+        reminderDatePicker.setStyle("-fx-font-size: 16px;");
 
         Button addReminderBtn = new Button("添加提醒");
-        addReminderBtn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
+        addReminderBtn.setStyle("-fx-font-size: 16px; -fx-background-color: #27ae60; -fx-text-fill: white;");
         addReminderBtn.setOnAction(e -> {
             String content = reminderContentField.getText();
             LocalDate date = reminderDatePicker.getValue();
@@ -671,10 +698,11 @@ public class StudentOnlineClass extends BorderPane {
         mainLayout.setPadding(new Insets(20));
         mainLayout.setStyle("-fx-background-color: #ecf0f1;");
 
-        // 左侧统计栏
+        // 左侧统计栏 - 修改3: 设置为可调整大小
         VBox statsBox = new VBox(15);
-        statsBox.setPrefWidth(200);
-        statsBox.setStyle("-fx-background-color: #34495e; -fx-padding: 15;");
+        statsBox.setMinWidth(200);
+        statsBox.setStyle("-fx-background-color: #34495e; -fx-padding: 15; -fx-background-radius: 10;");
+        VBox.setVgrow(statsBox, Priority.ALWAYS);
 
         // 初始化统计卡片（将从数据库获取数据）
         VBox notStarted = createStatCard("未开始课程", "0门", "#e74c3c");
@@ -688,10 +716,8 @@ public class StudentOnlineClass extends BorderPane {
             CourseStats stats;
 
             if (statsObj instanceof Map) {
-                // 如果返回的是 Map，使用构造函数转换
                 stats = new CourseStats((Map<String, Object>) statsObj);
             } else {
-                // 如果已经是 CourseStats 对象，直接使用
                 stats = (CourseStats) statsObj;
             }
 
@@ -701,7 +727,6 @@ public class StudentOnlineClass extends BorderPane {
             total = createStatCard("总计", stats.total + "门", "#2c3e50");
         } catch (Exception e) {
             e.printStackTrace();
-            // 显示错误消息
             System.err.println("加载课程统计失败: " + e.getMessage());
         }
 
@@ -709,7 +734,9 @@ public class StudentOnlineClass extends BorderPane {
 
         // 右侧内容区域
         VBox contentArea = new VBox(20);
-        contentArea.setPrefWidth(800);
+        contentArea.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;");
+        HBox.setHgrow(contentArea, Priority.ALWAYS);
+        VBox.setVgrow(contentArea, Priority.ALWAYS);
 
         // 搜索和筛选区域
         HBox searchBox = new HBox(10);
@@ -717,16 +744,21 @@ public class StudentOnlineClass extends BorderPane {
 
         TextField searchField = new TextField();
         searchField.setPromptText("搜索课程名称或教师...");
-        searchField.setPrefWidth(300);
+        searchField.setStyle("-fx-font-size: 16px;");
+        HBox.setHgrow(searchField, Priority.ALWAYS);
 
         Button searchBtn = new Button("搜索");
-        Button filterBtn = new Button("筛选");
+        searchBtn.setStyle("-fx-font-size: 16px; -fx-background-color: #3498db; -fx-text-fill: white;");
 
-        // 将"全部课程"按钮改为筛选框
+        // 修改3: 筛选按钮放在筛选框右边
         ComboBox<String> filterComboBox = new ComboBox<>();
         filterComboBox.getItems().addAll("全部课程", "进行中", "未开始", "已结束");
         filterComboBox.setValue("全部课程");
+        filterComboBox.setStyle("-fx-font-size: 16px;");
         filterComboBox.setPrefWidth(120);
+
+        Button filterBtn = new Button("筛选");
+        filterBtn.setStyle("-fx-font-size: 16px; -fx-background-color: #2ecc71; -fx-text-fill: white;");
 
         // 搜索按钮事件
         searchBtn.setOnAction(e -> {
@@ -771,20 +803,23 @@ public class StudentOnlineClass extends BorderPane {
             }
         });
 
-        searchBox.getChildren().addAll(searchField, searchBtn, filterBtn, filterComboBox);
+        searchBox.getChildren().addAll(searchField, searchBtn, filterComboBox, filterBtn);
 
         // 课程表格
         Label tableLabel = new Label("课程列表");
-        tableLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        tableLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 20px; -fx-text-fill: #2c3e50;");
 
-        courseTable.setItems(courseList); // 使用从数据库加载的数据
-        courseTable.setPrefHeight(400);
+        courseTable.setItems(courseList);
+        courseTable.setStyle("-fx-font-size: 16px;");
+        VBox.setVgrow(courseTable, Priority.ALWAYS);
 
         contentArea.getChildren().addAll(searchBox, tableLabel, courseTable);
+        VBox.setVgrow(courseTable, Priority.ALWAYS);
 
         mainLayout.getChildren().addAll(statsBox, contentArea);
+        HBox.setHgrow(contentArea, Priority.ALWAYS);
         this.setCenter(mainLayout);
-        this.setLeft(null); // 移除左侧导航
+        this.setLeft(null);
     }
 
     /**
@@ -802,42 +837,43 @@ public class StudentOnlineClass extends BorderPane {
         HBox backButtonBox = new HBox();
         backButtonBox.setAlignment(Pos.CENTER_LEFT);
         Button backButton = new Button("← 返回课程列表");
-        backButton.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;");
+        backButton.setStyle("-fx-font-size: 16px; -fx-background-color: #3498db; -fx-text-fill: white;");
         backButton.setOnAction(e -> showCoursesPage());
         backButtonBox.getChildren().add(backButton);
 
-        // 课程基本信息
+        // 课程基本信息 - 修改4: 增大字体
         VBox courseInfoBox = new VBox(10);
         courseInfoBox.setPadding(new Insets(15));
         courseInfoBox.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
 
         Label courseTitle = new Label(course.getCourseName());
-        courseTitle.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 24));
+        courseTitle.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 24px; -fx-text-fill: #2c3e50;");
 
         GridPane infoGrid = new GridPane();
         infoGrid.setHgap(20);
         infoGrid.setVgap(10);
         infoGrid.setPadding(new Insets(10, 0, 0, 0));
 
-        // 课程信息表格
-        infoGrid.add(new Label("授课教师:"), 0, 0);
-        infoGrid.add(new Label(course.getTeacherName()), 1, 0);
+        // 课程信息表格 - 修改4: 增大字体
+        infoGrid.add(createStyledLabel("授课教师:"), 0, 0);
+        infoGrid.add(createStyledLabel(course.getTeacherName()), 1, 0);
 
-        infoGrid.add(new Label("课程时间:"), 0, 1);
-        infoGrid.add(new Label(course.getStartDate() + " 至 " + course.getEndDate()), 1, 1);
+        infoGrid.add(createStyledLabel("课程时间:"), 0, 1);
+        infoGrid.add(createStyledLabel(course.getStartDate() + " 至 " + course.getEndDate()), 1, 1);
 
-        infoGrid.add(new Label("课程状态:"), 0, 2);
-        Label statusLabel = new Label(course.getStatus());
+        infoGrid.add(createStyledLabel("课程状态:"), 0, 2);
+        Label statusLabel = createStyledLabel(course.getStatus());
         statusLabel.setTextFill(course.getStatus().equals("进行中") ? Color.GREEN : Color.GRAY);
         infoGrid.add(statusLabel, 1, 2);
 
-        infoGrid.add(new Label("课程学分:"), 0, 3);
-        infoGrid.add(new Label(String.valueOf(course.getCredits())), 1, 3);
+        infoGrid.add(createStyledLabel("课程学分:"), 0, 3);
+        infoGrid.add(createStyledLabel(String.valueOf(course.getCredits())), 1, 3);
 
         courseInfoBox.getChildren().addAll(courseTitle, infoGrid);
 
         // 功能选项卡
         TabPane tabPane = new TabPane();
+        tabPane.setStyle("-fx-font-size: 16px;");
 
         // 课程回放选项卡
         Tab playbackTab = new Tab("课程回放", createPlaybackContent());
@@ -855,8 +891,16 @@ public class StudentOnlineClass extends BorderPane {
 
         detailPage.getChildren().addAll(backButtonBox, courseInfoBox, tabPane);
         this.setCenter(detailPage);
-        this.setLeft(null); // 移除左侧导航
+        this.setLeft(null);
     }
+
+    // 创建样式化标签的辅助方法
+    private Label createStyledLabel(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 16px;");
+        return label;
+    }
+
 
     /**
      * 创建课程回放内容
@@ -866,16 +910,17 @@ public class StudentOnlineClass extends BorderPane {
         playbackContent.setPadding(new Insets(15));
 
         Label titleLabel = new Label("课程回放列表");
-        titleLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        titleLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 20px; -fx-text-fill: #2c3e50;");
 
         ListView<CoursePlayback> playbackListView = new ListView<>();
         try {
-            // 使用当前课程的课程ID
             playbackList.setAll(clientService.getCoursePlaybacks(currentCourse.getCourseId()));
         } catch (Exception e) {
             e.printStackTrace();
-            // 处理错误
         }
+
+        // 修改4: 增大列表字体
+        playbackListView.setStyle("-fx-font-size: 16px;");
         playbackListView.setCellFactory(param -> new ListCell<CoursePlayback>() {
             @Override
             protected void updateItem(CoursePlayback item, boolean empty) {
@@ -884,6 +929,7 @@ public class StudentOnlineClass extends BorderPane {
                     setText(null);
                 } else {
                     setText(item.getDate() + " - " + item.getTitle() + " (" + item.getDuration() + ")");
+                    setStyle("-fx-font-size: 16px;");
                 }
             }
         });
@@ -891,7 +937,7 @@ public class StudentOnlineClass extends BorderPane {
         playbackListView.setItems(playbackList);
 
         Button playButton = new Button("播放选中的回放");
-        playButton.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;");
+        playButton.setStyle("-fx-font-size: 16px; -fx-background-color: #3498db; -fx-text-fill: white;");
 
         playbackContent.getChildren().addAll(titleLabel, playbackListView, playButton);
         return playbackContent;
@@ -905,35 +951,40 @@ public class StudentOnlineClass extends BorderPane {
         materialsContent.setPadding(new Insets(15));
 
         Label titleLabel = new Label("课程资料列表");
-        titleLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        titleLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 20px; -fx-text-fill: #2c3e50;");
 
         TableView<CourseMaterial> materialsTable = new TableView<>();
         try {
-            // 使用当前课程的课程ID
             materialList.setAll(clientService.getCourseMaterials(currentCourse.getCourseId()));
         } catch (Exception e) {
             e.printStackTrace();
-            // 处理错误
         }
+
+        // 修改4: 增大表格字体
+        materialsTable.setStyle("-fx-font-size: 16px;");
 
         TableColumn<CourseMaterial, String> nameCol = new TableColumn<>("资料名称");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameCol.setStyle("-fx-font-size: 16px;");
 
         TableColumn<CourseMaterial, String> typeCol = new TableColumn<>("类型");
         typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+        typeCol.setStyle("-fx-font-size: 16px;");
 
         TableColumn<CourseMaterial, String> sizeCol = new TableColumn<>("大小");
         sizeCol.setCellValueFactory(new PropertyValueFactory<>("size"));
+        sizeCol.setStyle("-fx-font-size: 16px;");
 
         TableColumn<CourseMaterial, String> dateCol = new TableColumn<>("上传日期");
         dateCol.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
+        dateCol.setStyle("-fx-font-size: 16px;");
 
         TableColumn<CourseMaterial, Void> actionCol = new TableColumn<>("操作");
         actionCol.setCellFactory(param -> new TableCell<CourseMaterial, Void>() {
             private final Button downloadBtn = new Button("下载");
 
             {
-                downloadBtn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
+                downloadBtn.setStyle("-fx-font-size: 14px; -fx-background-color: #27ae60; -fx-text-fill: white;");
                 downloadBtn.setOnAction(event -> {
                     CourseMaterial material = getTableView().getItems().get(getIndex());
                     // 下载逻辑
@@ -962,26 +1013,25 @@ public class StudentOnlineClass extends BorderPane {
     /**
      * 创建讨论区内容
      */
-    /**
-     * 创建讨论区内容
-     */
     private VBox createDiscussionContent() {
         VBox discussionContent = new VBox(15);
         discussionContent.setPadding(new Insets(15));
 
         Label titleLabel = new Label("课程讨论区");
-        titleLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        titleLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 20px; -fx-text-fill: #2c3e50;");
 
         TextArea newPostArea = new TextArea();
         newPostArea.setPromptText("发表新的讨论...");
         newPostArea.setPrefHeight(100);
+        newPostArea.setStyle("-fx-font-size: 16px;");
 
         Button postButton = new Button("发表");
-        postButton.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;");
+        postButton.setStyle("-fx-font-size: 16px; -fx-background-color: #3498db; -fx-text-fill: white;");
 
         // 初始化讨论列表
         ListView<String> discussionListView = new ListView<>();
         discussionListView.setItems(discussionList);
+        discussionListView.setStyle("-fx-font-size: 16px;");
 
         // 加载讨论列表的方法
         Runnable loadDiscussions = () -> {
@@ -1116,7 +1166,7 @@ public class StudentOnlineClass extends BorderPane {
         int totalCount = assignmentList.size();
 
         for (Assignment assignment : assignmentList) {
-            if ("已提交".equals(assignment.getStatus())) {
+            if ("已提交".equals(assignment.getStatus()) || "已批改".equals(assignment.getStatus())) {
                 submittedCount++;
             } else if ("未提交".equals(assignment.getStatus())) {
                 notSubmittedCount++;
@@ -1126,35 +1176,37 @@ public class StudentOnlineClass extends BorderPane {
             }
         }
 
-        // 左侧统计栏
+        // 左侧统计栏 - 修改5: 设置为可调整大小
         VBox statsBox = new VBox(15);
-        statsBox.setPrefWidth(200);
-        statsBox.setStyle("-fx-background-color: #34495e; -fx-padding: 15;");
+        statsBox.setMinWidth(200);
+        statsBox.setStyle("-fx-background-color: #34495e; -fx-padding: 15; -fx-background-radius: 10;");
+        VBox.setVgrow(statsBox, Priority.ALWAYS);
 
         // 创建统计卡片
         VBox submitted = createStatCard("已提交", submittedCount + "个", "#27ae60");
         VBox notSubmitted = createStatCard("未提交", notSubmittedCount + "个", "#e74c3c");
         VBox urgentCard = createStatCard("紧急作业", urgentCount + "个", "#f39c12");
-        VBox total = createStatCard("总计", totalCount + "个", "#2c3e50");
+        VBox totalCard = createStatCard("总计", totalCount + "个", "#2c3e50");
 
         // 进度条
         double progress = totalCount > 0 ? (double) submittedCount / totalCount : 0;
         ProgressBar progressBar = new ProgressBar(progress);
         Label progressLabel = new Label(String.format("提交进度: %.1f%%", progress * 100));
+        progressLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: white;");
 
         VBox progressBox = new VBox(5);
         progressBox.setAlignment(Pos.CENTER);
         progressBox.setStyle("-fx-background-color: #2c3e50; -fx-padding: 10; -fx-background-radius: 8;");
-        progressLabel.setTextFill(Color.WHITE);
-        progressLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 14));
         progressBar.setPrefWidth(180);
         progressBox.getChildren().addAll(progressLabel, progressBar);
 
-        statsBox.getChildren().addAll(submitted, notSubmitted, urgentCard, total, progressBox);
+        statsBox.getChildren().addAll(submitted, notSubmitted, urgentCard, totalCard, progressBox);
 
         // 右侧内容区域
         VBox contentArea = new VBox(20);
-        contentArea.setPrefWidth(800);
+        contentArea.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;");
+        HBox.setHgrow(contentArea, Priority.ALWAYS);
+        VBox.setVgrow(contentArea, Priority.ALWAYS);
 
         // 搜索和筛选区域
         HBox searchBox = new HBox(10);
@@ -1162,15 +1214,21 @@ public class StudentOnlineClass extends BorderPane {
 
         TextField searchField = new TextField();
         searchField.setPromptText("搜索作业名称或课程...");
-        searchField.setPrefWidth(300);
+        searchField.setStyle("-fx-font-size: 16px;");
+        HBox.setHgrow(searchField, Priority.ALWAYS);
 
         Button searchBtn = new Button("搜索");
-        Button filterBtn = new Button("筛选");
+        searchBtn.setStyle("-fx-font-size: 16px; -fx-background-color: #3498db; -fx-text-fill: white;");
 
         ComboBox<String> filterComboBox = new ComboBox<>();
         filterComboBox.getItems().addAll("全部作业", "已提交", "未提交", "紧急作业");
         filterComboBox.setValue("全部作业");
+        filterComboBox.setStyle("-fx-font-size: 16px;");
         filterComboBox.setPrefWidth(120);
+
+        Button filterBtn = new Button("筛选");
+        filterBtn.setStyle("-fx-font-size: 16px; -fx-background-color: #2ecc71; -fx-text-fill: white;");
+
 
         // 搜索按钮事件
         searchBtn.setOnAction(e -> {
@@ -1202,30 +1260,37 @@ public class StudentOnlineClass extends BorderPane {
             }
         });
 
-        searchBox.getChildren().addAll(searchField, searchBtn, filterBtn, filterComboBox);
+        searchBox.getChildren().addAll(searchField, searchBtn, filterComboBox, filterBtn);
 
         // 紧急作业区域
         Label urgentLabel = new Label("紧急作业（截止日期临近）");
-        urgentLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        urgentLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 20px; -fx-text-fill: #2c3e50;");
 
         // 使用过滤后的列表
         ObservableList<Assignment> urgentAssignments = assignmentList.filtered(a ->
                 "紧急".equals(a.getPriority()) && "未提交".equals(a.getStatus()));
         urgentTable.setItems(urgentAssignments);
         urgentTable.setPrefHeight(120);
+        urgentTable.setStyle("-fx-font-size: 16px;");
 
         // 全部作业区域
         Label allLabel = new Label("全部作业");
-        allLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+        allLabel.setStyle("-fx-font-family: '微软雅黑'; -fx-font-weight: BOLD; -fx-font-size: 20px; -fx-text-fill: #2c3e50;");
 
         allTable.setItems(assignmentList);
         allTable.setPrefHeight(300);
+        allTable.setStyle("-fx-font-size: 16px;");
+        VBox.setVgrow(allTable, Priority.ALWAYS);
+
         contentArea.getChildren().addAll(searchBox, urgentLabel, urgentTable, allLabel, allTable);
+        VBox.setVgrow(allTable, Priority.ALWAYS);
 
         mainLayout.getChildren().addAll(statsBox, contentArea);
+        HBox.setHgrow(contentArea, Priority.ALWAYS);
         this.setCenter(mainLayout);
         this.setLeft(null);
     }
+
 
     /**
      * 创建统计卡片
@@ -1237,12 +1302,14 @@ public class StudentOnlineClass extends BorderPane {
         card.setAlignment(Pos.CENTER);
 
         Label valueLabel = new Label(value);
-        valueLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 18));
+        valueLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 26));
         valueLabel.setTextFill(Color.WHITE);
+        valueLabel.setStyle("-fx-font-size: 26; -fx-font: Microsoft YaHei; -fx-font-weight: BOLD");
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font(12));
+        titleLabel.setFont(Font.font(24));
         titleLabel.setTextFill(Color.WHITE);
+        titleLabel.setStyle("-fx-font-size: 24; -fx-font: Microsoft YaHei; -fx-font-weight: BOLD");
 
         card.getChildren().addAll(valueLabel, titleLabel);
         return card;
@@ -1293,10 +1360,13 @@ public class StudentOnlineClass extends BorderPane {
             public TableCell<Assignment, Void> call(final TableColumn<Assignment, Void> param) {
                 return new TableCell<>() {
                     private final Button submitBtn = new Button("提交作业");
+                    private final Button viewFeedbackBtn = new Button("查看批改");
+                    private final HBox buttonBox = new HBox(5, submitBtn, viewFeedbackBtn);
                     private final FileChooser fileChooser = new FileChooser();
 
                     {
                         submitBtn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
+                        viewFeedbackBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;");
                         fileChooser.setTitle("选择作业文件");
 
                         submitBtn.setOnAction(event -> {
@@ -1335,6 +1405,7 @@ public class StudentOnlineClass extends BorderPane {
                                             alert.showAndWait();
                                         }
                                     }
+
                                     @Override
                                     protected void failed() {
                                         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -1348,6 +1419,44 @@ public class StudentOnlineClass extends BorderPane {
                                 new Thread(submitTask).start();
                             }
                         });
+
+                        viewFeedbackBtn.setOnAction(event -> {
+                            Assignment assignment = getTableView().getItems().get(getIndex());
+                            // 使用异步任务获取批改详情
+                            Task<Map<String, String>> feedbackTask = new Task<Map<String, String>>() {
+                                @Override
+                                protected Map<String, String> call() throws Exception {
+                                    return clientService.getAssignmentFeedback(
+                                            assignment.getName(), currentUser);
+                                }
+
+                                @Override
+                                protected void succeeded() {
+                                    Map<String, String> feedback = getValue();
+                                    if (feedback != null && !feedback.isEmpty()) {
+                                        // 显示批改详情对话框
+                                        showFeedbackDialog(assignment, feedback);
+                                    } else {
+                                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                        alert.setTitle("批改详情");
+                                        alert.setHeaderText(null);
+                                        alert.setContentText("暂无批改详情");
+                                        alert.showAndWait();
+                                    }
+                                }
+
+                                @Override
+                                protected void failed() {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("获取失败");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("获取批改详情失败: " + getException().getMessage());
+                                    alert.showAndWait();
+                                }
+                            };
+
+                            new Thread(feedbackTask).start();
+                        });
                     }
 
                     @Override
@@ -1357,9 +1466,13 @@ public class StudentOnlineClass extends BorderPane {
                             setGraphic(null);
                         } else {
                             Assignment assignment = getTableView().getItems().get(getIndex());
-                            // 只有未提交的作业显示提交按钮
+                            // 根据作业状态显示不同的按钮
                             if ("未提交".equals(assignment.getStatus())) {
                                 setGraphic(submitBtn);
+                                viewFeedbackBtn.setVisible(false);
+                            } else if ("已批改".equals(assignment.getStatus())) {
+                                setGraphic(viewFeedbackBtn);
+                                submitBtn.setVisible(false);
                             } else {
                                 setGraphic(null);
                             }
@@ -1368,5 +1481,42 @@ public class StudentOnlineClass extends BorderPane {
                 };
             }
         };
+    }
+
+    /**
+     * 显示批改详情对话框
+     */
+    private void showFeedbackDialog(Assignment assignment, Map<String, String> feedback) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("作业批改详情 - " + assignment.getName());
+        dialog.setHeaderText("课程: " + assignment.getCourse());
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // 添加批改详情
+        grid.add(new Label("作业名称:"), 0, 0);
+        grid.add(new Label(assignment.getName()), 1, 0);
+
+        grid.add(new Label("课程:"), 0, 1);
+        grid.add(new Label(assignment.getCourse()), 1, 1);
+
+        grid.add(new Label("成绩:"), 0, 2);
+        Label scoreLabel = new Label(feedback.get("score"));
+        scoreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
+        grid.add(scoreLabel, 1, 2);
+
+        grid.add(new Label("评语:"), 0, 3);
+        TextArea feedbackArea = new TextArea(feedback.get("feedback"));
+        feedbackArea.setEditable(false);
+        feedbackArea.setWrapText(true);
+        feedbackArea.setPrefRowCount(3);
+        grid.add(feedbackArea, 1, 3);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.showAndWait();
     }
 }

@@ -327,6 +327,7 @@ public class ClientHandler implements Runnable {
                 case ONLINE_CLASS_SEARCH_TEACHER_ASSIGNMENTS:
                 case ONLINE_CLASS_GET_TEACHER_COURSE_NAMES:
                 case ONLINE_CLASS_SEARCH_TEACHER_COURSES:
+                case ONLINE_CLASS_GET_ASSIGNMENT_FEEDBACK:
                     return handleOnlineClassOperation(message);
 
                 case CARD_GET_INFO:

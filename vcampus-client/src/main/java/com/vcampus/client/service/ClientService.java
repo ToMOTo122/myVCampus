@@ -9,10 +9,8 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import com.vcampus.common.entity.*;
 import com.vcampus.common.util.CommonUtils;
 
@@ -873,6 +871,24 @@ public class ClientService {
         Message request = new Message(Message.Type.ONLINE_CLASS_SEARCH_TEACHER_COURSES, params);
         Message response = sendRequest(request);
         return CommonUtils.convertToGenericList(response.getData(), Course.class);
+    }
+
+    /**
+     * 获取作业批改详情
+     */
+    public Map<String, String> getAssignmentFeedback(String assignmentName, User user) {
+        try {
+            Message request = new Message(Message.Type.ONLINE_CLASS_GET_ASSIGNMENT_FEEDBACK,
+                    new Object[]{assignmentName, user});
+            Message response = sendRequest(request);
+
+            if (response.getType() == Message.Type.SUCCESS) {
+                return (Map<String, String>) response.getData();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new HashMap<>();
     }
 
     /**

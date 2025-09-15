@@ -8,9 +8,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.List;
 
 public class OnlineClassService {
 
@@ -200,6 +199,13 @@ public class OnlineClassService {
                     String keyword1 = (String) teacherCourseParams[0];
                     List<Course> searchedTeacherCourses = service.searchTeacherCourses(keyword1, currentUser);
                     return Message.success(searchedTeacherCourses);
+
+                case ONLINE_CLASS_GET_ASSIGNMENT_FEEDBACK:
+                    Object[] feedbackParams = (Object[]) data;
+                    String assignmentName = (String) feedbackParams[0];
+                    User user1 = (User) feedbackParams[1];
+                    Map<String, String> feedback = service.getAssignmentFeedback(assignmentName, user1);
+                    return Message.success(feedback);
 
                 default:
                     return Message.error("不支持的在线课堂操作类型: " + type);
@@ -582,7 +588,7 @@ public class OnlineClassService {
 
         // 添加筛选条件
         if (filter != null && !filter.equals("全部作业")) {
-            if (filter.equals("已提交")) {
+            if (filter.equals("已提交") || filter.equals("已批改")) {
                 sql += " AND sa.status = '已提交'";
             } else if (filter.equals("未提交")) {
                 sql += " AND sa.status = '未提交'";
@@ -649,6 +655,8 @@ public class OnlineClassService {
         }
         return assignments;
     }
+
+
 
     // 获取作业统计信息
     public AssignmentStats getAssignmentStats(User currentUser) throws SQLException {
@@ -1453,5 +1461,29 @@ public class OnlineClassService {
             }
         }
         return new ArrayList<>(courses);
+    }
+
+    /**
+     * 获取作业批改详情
+     */
+    public Map<String, String> getAssignmentFeedback(String assignmentName, User user) throws SQLException {
+        Map<String, String> feedback = new HashMap<>();
+        String sql = "SELECT sa.score, sa.feedback " +
+                "FROM tbl_student_assignment sa " +
+                "JOIN tbl_assignment a ON sa.assignment_id = a.assignment_id " +
+                "WHERE sa.student_id = ? AND a.assignment_name = ?";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, user.getUserId());
+            stmt.setString(2, assignmentName);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                feedback.put("score", rs.getString("score"));
+                feedback.put("feedback", rs.getString("feedback"));
+            }
+        }
+        return feedback;
     }
 }
