@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.vcampus.client.controller.course.StudentCourseController"
+            styleClass="modern-student-container">
+
+    <!-- 顶部状态面板 -->
+    <top>
+        <VBox styleClass="student-header-panel">
+            <!-- 学分统计区域 -->
+            <HBox alignment="CENTER" spacing="50" styleClass="stats-dashboard">
+                <padding>
+                    <Insets top="25" right="40" bottom="25" left="40"/>
+                </padding>
+
+                <!-- 学分进度卡片 -->
+                <VBox alignment="CENTER" spacing="12" styleClass="progress-card">
+                    <padding>
+                        <Insets top="20" right="25" bottom="20" left="25"/>
+                    </padding>
+
+                    <Label text="学分统计" styleClass="card-title"/>
+                    <HBox alignment="CENTER" spacing="8">
+                        <Label fx:id="selectedCreditsLabel" text="0" styleClass="main-number"/>
+                        <Label fx:id="totalCreditsLabel" text="/ 25" styleClass="total-number"/>
+                    </HBox>
+                    <ProgressBar fx:id="creditsProgressBar" prefWidth="200" prefHeight="8" styleClass="modern-progress"/>
+                    <Label text="继续努力完成学分要求" styleClass="progress-hint"/>
+                </VBox>
+
+                <!-- 快速统计 -->
+                <VBox alignment="CENTER" spacing="15" HBox.hgrow="ALWAYS">
+                    <HBox spacing="40" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="5" styleClass="stat-item">
+                            <Label text="已选课程" styleClass="stat-label"/>
+                            <Label fx:id="selectedCoursesCountLabel" text="0" styleClass="stat-value"/>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="5" styleClass="stat-item">
+                            <Label text="周课时" styleClass="stat-label"/>
+                            <Label fx:id="weeklyHoursDisplayLabel" text="0" styleClass="stat-value"/>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="5" styleClass="stat-item">
+                            <Label text="平均绩点" styleClass="stat-label"/>
+                            <Label text="3.8" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- 操作按钮组 -->
+                <VBox spacing="12" alignment="CENTER">
+                    <Button text="刷新数据" onAction="#handleRefresh" styleClass="modern-btn primary"/>
+                    <Button text="查看课表" styleClass="modern-btn secondary"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- 主内容区域：直接显示选课界面 -->
+    <center>
+        <VBox spacing="20" styleClass="tab-content-wrapper">
+            <padding>
+                <Insets top="25" right="25" bottom="25" left="25"/>
+            </padding>
+
+            <!-- 搜索筛选面板 -->
+            <VBox spacing="15" styleClass="search-filter-panel">
+                <padding>
+                    <Insets top="20" right="25" bottom="20" left="25"/>
+                </padding>
+
+                <Label text="课程搜索与筛选" styleClass="section-header"/>
+
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <!-- 搜索输入框 -->
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="课程搜索" styleClass="field-label"/>
+                        <TextField fx:id="searchField"
+                                   promptText="输入课程名称、编号或教师姓名进行搜索..."
+                                   styleClass="modern-search-field"/>
+                    </VBox>
+
+                    <!-- 搜索按钮 -->
+                    <VBox spacing="8" alignment="BOTTOM_CENTER">
+                        <Label text="" styleClass="field-label"/>
+                        <Button fx:id="searchButton" text="搜索" onAction="#handleSearch"
+                                styleClass="modern-btn search-btn" prefWidth="80"/>
+                    </VBox>
+
+                    <!-- 筛选下拉框 -->
+                    <VBox spacing="8">
+                        <Label text="开课院系" styleClass="field-label"/>
+                        <ComboBox fx:id="departmentFilter"
+                                  prefWidth="130"
+                                  styleClass="modern-combo"/>
+                    </VBox>
+
+                    <VBox spacing="8">
+                        <Label text="课程类型" styleClass="field-label"/>
+                        <ComboBox fx:id="typeFilter"
+                                  prefWidth="110"
+                                  styleClass="modern-combo"/>
+                    </VBox>
+
+                    <VBox spacing="8" alignment="BOTTOM_CENTER">
+                        <Label text="" styleClass="field-label"/>
+                        <Button text="智能推荐" styleClass="modern-btn accent" prefWidth="90"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- 课程表格 - 合并可选和已选课程 -->
+            <VBox VBox.vgrow="ALWAYS" spacing="15" styleClass="course-table-container">
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <Label text="课程列表" styleClass="table-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="绿色标记为已选课程，点击课程名称可查看详细信息" styleClass="table-hint"/>
+                </HBox>
+
+                <TableView fx:id="availableCoursesTable" styleClass="elegant-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="courseIdCol" text="课程编号" prefWidth="80"/>
+                        <TableColumn fx:id="courseNameCol" text="课程名称" prefWidth="160"/>
+                        <TableColumn fx:id="teacherCol" text="授课教师" prefWidth="100"/>
+                        <TableColumn fx:id="creditsCol" text="学分" prefWidth="50"/>
+                        <TableColumn fx:id="courseTypeCol" text="类型" prefWidth="60"/>
+                        <TableColumn fx:id="scheduleCol" text="上课时间" prefWidth="120"/>
+                        <TableColumn fx:id="statusCol" text="选课状态" prefWidth="90"/>
+                        <TableColumn fx:id="actionCol" text="操作" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

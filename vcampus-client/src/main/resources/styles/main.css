@@ -1,0 +1,169 @@
+/* VCampus主界面样式 */
+
+.main-root {
+    -fx-background-image: url("../images/campus_bg.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+.main-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar {
+    /* 侧边栏背景颜色：从0.95降低到0.7，使其更透明 */
+    -fx-background-color: rgba(52, 73, 94, 0.7);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0 1 0 0;
+}
+
+.content-area {
+    /* 中心内容区域背景颜色：从0.8降低到0.5，使其更透明 */
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+    -fx-background-radius: 15 0 0 15;
+}
+
+.header-bar {
+    /* 顶部导航栏背景颜色：从0.95降低到0.7，使其更透明 */
+    -fx-background-color: rgba(52, 73, 94, 0.7);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0 0 1 0;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-padding: 15 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15); /* 悬停时稍微更明显一点 */
+    -fx-text-fill: white;
+}
+
+.nav-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.25); /* 按下时更明显 */
+}
+
+.nav-button.active {
+    -fx-background-color: rgba(103, 126, 234, 0.3);
+    -fx-text-fill: white;
+}
+
+.welcome-card {
+    /* 欢迎卡片背景颜色：从0.95降低到0.7，使其更透明 */
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: rgba(103, 126, 234, 0.2);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5);
+}
+
+.function-card {
+    /* 信息卡片背景颜色：从0.9降低到0.7，使其更透明 */
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(103, 126, 234, 0.3);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+.function-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 8);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.stat-card {
+    /* 状态卡片背景颜色：从0.1增加到0.2，使其更明显但仍透明 */
+    -fx-background-color: rgba(103, 126, 234, 0.2);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.search-field {
+    -fx-background-color: rgba(248, 249, 250, 0.8);
+    -fx-border-color: rgba(52, 73, 94, 0.2);
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 8 15;
+}
+
+
+/* 校园商店面板样式 */
+.shop-panel {
+    -fx-background-color: #f5f6fa;
+    -fx-background-radius: 15;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+.shop-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495e;
+    -fx-padding: 0 0 20 0;
+}
+
+.shop-button {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #34495e;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 10;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 0);
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.shop-button:hover {
+    -fx-background-color: #f0f2f5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 0);
+}
+
+/*yhr9.14 0：39添加*/
+/* 校园商店面板样式 */
+.shop-panel {
+    -fx-background-color: #f5f6fa;
+    -fx-background-radius: 15;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+.shop-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495e;
+    -fx-padding: 0 0 20 0;
+}
+
+.shop-button {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #34495e;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 10;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 0);
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.shop-button:hover {
+    -fx-background-color: #f0f2f5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 0);
+}
+/*添加完毕*/

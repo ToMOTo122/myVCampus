@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.vcampus.client.controller.course.AdminCourseController">
+
+    <!-- 顶部标题和搜索 -->
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="30">
+                <padding>
+                    <Insets top="20" right="30" bottom="20" left="30"/>
+                </padding>
+                <Label text="课程管理系统" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #000000;"/>
+
+                <!-- 搜索区域 -->
+                <HBox spacing="15" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <TextField fx:id="searchField" promptText="搜索课程名称、编号或教师..." prefWidth="200"
+                               style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #cccccc; -fx-border-width: 1;"/>
+                    <ComboBox fx:id="searchDepartmentFilter" promptText="院系" prefWidth="120"/>
+                    <ComboBox fx:id="searchTypeFilter" promptText="类型" prefWidth="100"/>
+                    <Button fx:id="searchButton" text="搜索" onAction="#handleSearch"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 15;"/>
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="刷新数据" onAction="#handleRefresh"
+                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 15;"/>
+            </HBox>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <!-- 主内容区域 -->
+    <center>
+        <SplitPane dividerPositions="0.5">
+
+            <!-- 左侧：表单 -->
+            <ScrollPane>
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- 基本信息 -->
+                    <VBox spacing="15">
+                        <Label text="课程基本信息" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #000000;"/>
+
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="80" prefWidth="80"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="课程编号" GridPane.rowIndex="0"/>
+                            <TextField fx:id="courseIdField" promptText="如：CS001" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="课程名称" GridPane.rowIndex="1"/>
+                            <TextField fx:id="courseNameField" promptText="如：Java程序设计" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="授课教师" GridPane.rowIndex="2"/>
+                            <ComboBox fx:id="teacherComboBox" promptText="选择教师" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                            <Label text="学分" GridPane.rowIndex="3"/>
+                            <TextField fx:id="creditsField" promptText="1-10" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <Label text="课程容量" GridPane.rowIndex="4"/>
+                            <TextField fx:id="capacityField" promptText="最大人数" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                            <Label text="开课院系" GridPane.rowIndex="5"/>
+                            <ComboBox fx:id="departmentComboBox" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                            <Label text="课程类型" GridPane.rowIndex="6"/>
+                            <ComboBox fx:id="courseTypeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+                            <Label text="教室" GridPane.rowIndex="7"/>
+                            <ComboBox fx:id="classroomComboBox" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+                            <Label text="学期" GridPane.rowIndex="8"/>
+                            <ComboBox fx:id="semesterComboBox" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+                        </GridPane>
+
+                        <VBox spacing="10">
+                            <Label text="课程描述"/>
+                            <TextArea fx:id="descriptionArea" prefRowCount="4" wrapText="true"/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- 时间安排 -->
+                    <VBox spacing="15">
+                        <Label text="时间安排" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #000000;"/>
+
+                        <GridPane hgap="15" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="80" prefWidth="80"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="星期" GridPane.rowIndex="0"/>
+                            <ComboBox fx:id="weekDayComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="开始节次" GridPane.rowIndex="1"/>
+                            <ComboBox fx:id="startPeriodComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="结束节次" GridPane.rowIndex="2"/>
+                            <ComboBox fx:id="endPeriodComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        </GridPane>
+
+                        <HBox spacing="10">
+                            <Button text="添加时间" onAction="#handleAddTimeSlot"
+                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 10;"/>
+                            <Button text="移除选中" onAction="#handleRemoveTimeSlot"
+                                    style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-background-radius: 10;"/>
+                            <Button text="清空全部" onAction="#handleClearAllTimeSlots"
+                                    style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 10;"/>
+                        </HBox>
+
+                        <ListView fx:id="selectedTimeSlotsListView" prefHeight="80"/>
+                    </VBox>
+
+                    <!-- 操作按钮 -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button fx:id="addCourseButton" text="添加课程" onAction="#handleAddCourse" prefWidth="100"
+                                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 15; -fx-font-weight: bold;"/>
+                        <Button fx:id="updateCourseButton" text="更新课程" onAction="#handleUpdateCourse" prefWidth="100" disable="true"
+                                style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-background-radius: 15; -fx-font-weight: bold;"/>
+                        <Button fx:id="deleteCourseButton" text="删除课程" onAction="#handleDeleteCourse" prefWidth="100" disable="true"
+                                style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 15; -fx-font-weight: bold;"/>
+                        <Button text="清空表单" onAction="#handleClearForm" prefWidth="100"
+                                style="-fx-background-color: #9e9e9e; -fx-text-fill: white; -fx-background-radius: 15; -fx-font-weight: bold;"/>
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+
+            <!-- 右侧：课程列表 -->
+            <VBox spacing="15">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <Label text="课程列表" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #000000;"/>
+
+                <TableView fx:id="coursesTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="adminCourseIdCol" text="编号" prefWidth="80"/>
+                        <TableColumn fx:id="adminCourseNameCol" text="课程名称" prefWidth="150"/>
+                        <TableColumn fx:id="adminTeacherCol" text="教师" prefWidth="100"/>
+                        <TableColumn fx:id="adminCreditsCol" text="学分" prefWidth="60"/>
+                        <TableColumn fx:id="adminScheduleCol" text="时间" prefWidth="120"/>
+                        <TableColumn fx:id="adminEnrolledCol" text="人数" prefWidth="80"/>
+                        <TableColumn fx:id="adminStatusCol" text="状态" prefWidth="80"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+</BorderPane>

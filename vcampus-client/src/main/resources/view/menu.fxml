@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox fx:id="menuVBox" spacing="15" alignment="TOP_CENTER"
+      styleClass="menu-pane" stylesheets="@../css/library.css"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.vcampus.client.controller.MenuController">
+
+    <padding>
+        <Insets top="30" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Button text="个人信息" styleClass="menu-button" userData="个人信息"/>
+    <Button text="选课系统" styleClass="menu-button" userData="选课系统"/>
+    <Button text="成绩查询" styleClass="menu-button" userData="成绩查询"/>
+    <Button text="图书馆" styleClass="menu-button" userData="图书馆"/>
+    <Button text="校园商店" styleClass="menu-button" userData="校园商店"/>
+</VBox>

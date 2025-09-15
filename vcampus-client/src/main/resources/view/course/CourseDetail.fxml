@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<DialogPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="550" prefHeight="450" styleClass="detail-dialog">
+
+    <header>
+        <Label text="📚 课程详细信息" styleClass="dialog-header"/>
+    </header>
+
+    <content>
+        <ScrollPane styleClass="detail-content-scroll" fitToWidth="true">
+            <VBox spacing="20" styleClass="detail-content">
+                <padding>
+                    <Insets top="25" right="25" bottom="25" left="25"/>
+                </padding>
+
+                <!-- 课程基本信息卡片 -->
+                <VBox styleClass="detail-card" spacing="15">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="📖 基本信息" styleClass="detail-card-title"/>
+
+                    <GridPane hgap="15" vgap="12" styleClass="detail-grid">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="90" prefWidth="90"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="课程编号" styleClass="detail-key" GridPane.rowIndex="0"/>
+                        <Label fx:id="detailCourseId" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="课程名称" styleClass="detail-key" GridPane.rowIndex="1"/>
+                        <Label fx:id="detailCourseName" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="授课教师" styleClass="detail-key" GridPane.rowIndex="2"/>
+                        <Label fx:id="detailTeacher" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="开课院系" styleClass="detail-key" GridPane.rowIndex="3"/>
+                        <Label fx:id="detailDepartment" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="课程类型" styleClass="detail-key" GridPane.rowIndex="4"/>
+                        <Label fx:id="detailCourseType" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                        <Label text="学分" styleClass="detail-key" GridPane.rowIndex="5"/>
+                        <Label fx:id="detailCredits" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                        <Label text="选课情况" styleClass="detail-key" GridPane.rowIndex="6"/>
+                        <HBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                            <Label fx:id="detailEnrolled" styleClass="detail-value"/>
+                            <Label text="/" styleClass="detail-separator"/>
+                            <Label fx:id="detailCapacity" styleClass="detail-value"/>
+                            <Label text="人" styleClass="detail-unit"/>
+                        </HBox>
+
+                        <Label text="上课时间" styleClass="detail-key" GridPane.rowIndex="7"/>
+                        <Label fx:id="detailSchedule" styleClass="detail-value" wrapText="true"
+                               GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+                        <Label text="教室" styleClass="detail-key" GridPane.rowIndex="8"/>
+                        <Label fx:id="detailClassroom" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+
+                        <Label text="学期" styleClass="detail-key" GridPane.rowIndex="9"/>
+                        <Label fx:id="detailSemester" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- 课程描述卡片 -->
+                <VBox styleClass="detail-card" spacing="15">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="📝 课程描述" styleClass="detail-card-title"/>
+                    <TextArea fx:id="detailDescription" prefRowCount="6" editable="false"
+                              wrapText="true" styleClass="detail-description"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="CLOSE"/>
+    </buttonTypes>
+
+</DialogPane>

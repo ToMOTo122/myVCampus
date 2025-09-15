@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.vcampus.client.controller.course.ScheduleViewController"
+            styleClass="schedule-main-container">
+
+    <!-- 顶部控制面板 - 优化高度 -->
+    <top>
+        <VBox styleClass="schedule-header">
+            <HBox alignment="CENTER_LEFT" spacing="30" styleClass="schedule-toolbar">
+                <padding>
+                    <Insets top="15" right="30" bottom="15" left="30"/>
+                </padding>
+
+                <Label text="我的课程表" styleClass="schedule-main-title"/>
+
+                <!-- 控制组 -->
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <!-- 学期选择 -->
+                    <VBox spacing="3">
+                        <Label text="学期" styleClass="control-label"/>
+                        <ComboBox fx:id="semesterComboBox"
+                                  promptText="选择学期"
+                                  prefWidth="100"
+                                  styleClass="semester-selector"/>
+                    </VBox>
+
+                    <!-- 视图模式选择器 -->
+                    <VBox spacing="3">
+                        <Label text="视图" styleClass="control-label"/>
+                        <ComboBox fx:id="viewModeComboBox"
+                                  promptText="选择视图"
+                                  prefWidth="100"
+                                  styleClass="view-mode-selector"/>
+                    </VBox>
+
+                    <!-- 当前周信息 -->
+                    <VBox spacing="3" alignment="CENTER">
+                        <Label text="当前周次" styleClass="control-label"/>
+                        <Label fx:id="weekInfoLabel" text="2025年第37周" styleClass="week-info-text"/>
+                    </VBox>
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- 操作按钮 -->
+                <Button text="刷新" onAction="#handleRefresh" styleClass="schedule-action-btn"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- 主要内容区域 - 优化布局比例 -->
+    <center>
+        <VBox spacing="15" styleClass="schedule-content">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- 课程表网格 - 增加占比 -->
+            <VBox spacing="10" styleClass="schedule-grid-section" VBox.vgrow="ALWAYS">
+                <Label text="周课程安排" styleClass="section-title"/>
+
+                <ScrollPane styleClass="schedule-scroll" fitToWidth="true"
+                            prefHeight="400" VBox.vgrow="ALWAYS">
+                    <GridPane fx:id="scheduleMainGrid"
+                              styleClass="weekly-schedule-grid"
+                              gridLinesVisible="true"
+                              alignment="TOP_CENTER"
+                              prefWidth="700">
+                        <!-- 课程表网格内容将通过代码动态生成 -->
+                    </GridPane>
+                </ScrollPane>
+            </VBox>
+
+            <!-- 学习统计面板 - 缩小高度 -->
+            <HBox spacing="40" alignment="CENTER" styleClass="study-stats-panel"
+                  prefHeight="80" maxHeight="80">
+                <padding>
+                    <Insets top="15" right="20" bottom="15" left="20"/>
+                </padding>
+
+                <VBox alignment="CENTER" spacing="5" styleClass="stat-box">
+                    <Label text="本周课时" styleClass="stat-label"/>
+                    <Label fx:id="weeklyHoursLabel" text="0" styleClass="stat-number"/>
+                </VBox>
+
+                <Separator orientation="VERTICAL" prefHeight="50"/>
+
+                <VBox alignment="CENTER" spacing="5" styleClass="stat-box">
+                    <Label text="已选学分" styleClass="stat-label"/>
+                    <Label fx:id="totalCreditsLabel" text="0" styleClass="stat-number"/>
+                </VBox>
+
+                <Separator orientation="VERTICAL" prefHeight="50"/>
+
+                <VBox alignment="CENTER" spacing="5" styleClass="stat-box">
+                    <Label text="课程门数" styleClass="stat-label"/>
+                    <Label fx:id="coursesCountLabel" text="0" styleClass="stat-number"/>
+                </VBox>
+
+                <Separator orientation="VERTICAL" prefHeight="50"/>
+
+                <VBox alignment="CENTER" spacing="5" styleClass="stat-box">
+                    <Label text="学习强度" styleClass="stat-label"/>
+                    <Label text="适中" styleClass="stat-number intensity-moderate"/>
+                </VBox>
+            </HBox>
+
+            <!-- 移除课程详细列表，简化界面 -->
+
+        </VBox>
+    </center>
+
+</BorderPane>

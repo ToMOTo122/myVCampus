@@ -1,0 +1,105 @@
+/*yhr9.14 1:32添加*/
+.shop-main-panel {
+    -fx-background-color: #f5f5f5;
+}
+
+.shop-top-bar {
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.shop-title {
+    -fx-text-fill: #333333;
+}
+
+.search-field {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-background-color: #e8e8e8;
+    -fx-prompt-text-fill: #999999;
+    -fx-padding: 0 15;
+}
+
+.search-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+}
+
+.cart-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 50;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 50;
+    -fx-border-width: 1px;
+}
+
+.cart-button:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+.cart-count-label {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-padding: 2 6;
+    -fx-font-weight: bold;
+}
+
+.product-scroll-pane {
+    -fx-background-color: #f5f5f5;
+}
+
+.product-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+.product-name {
+    -fx-text-fill: #333333;
+}
+
+.product-price {
+    -fx-text-fill: #dc3545;
+}
+
+.detail-button, .add-to-cart-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+/* 购物车弹窗样式 */
+.shopping-cart-dialog {
+    -fx-background-color: #f8f9fa;
+}
+
+.cart-item-box {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 5;
+    -fx-border-width: 1px;
+}
+
+.total-label {
+    -fx-text-fill: #333333;
+}
+
+.checkout-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+}
+
+.delete-button {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}

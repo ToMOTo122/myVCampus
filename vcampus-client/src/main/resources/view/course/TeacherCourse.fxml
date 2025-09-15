@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.vcampus.client.controller.course.TeacherCourseController"
+            styleClass="teacher-main-container">
+
+    <!-- 顶部教师信息面板 -->
+    <top>
+        <VBox styleClass="teacher-info-header">
+            <HBox alignment="CENTER_LEFT" spacing="50" styleClass="teacher-dashboard">
+                <padding>
+                    <Insets top="25" right="40" bottom="25" left="40"/>
+                </padding>
+
+                <!-- 教师基本信息卡片 -->
+                <VBox spacing="10" styleClass="teacher-info-card">
+                    <Label text="教师信息" styleClass="info-section-title"/>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="姓名:" styleClass="info-key"/>
+                        <Label fx:id="teacherNameLabel" text="张教授" styleClass="info-value"/>
+                    </HBox>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="工号:" styleClass="info-key"/>
+                        <Label text="T001" styleClass="info-value"/>
+                    </HBox>
+                </VBox>
+
+                <!-- 教学统计卡片 -->
+                <HBox spacing="40" alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <VBox spacing="10" alignment="CENTER" styleClass="stats-card">
+                        <Label text="授课门数" styleClass="stats-label"/>
+                        <Label fx:id="totalCoursesLabel" text="0" styleClass="stats-number"/>
+                        <Label text="门课程" styleClass="stats-unit"/>
+                    </VBox>
+
+                    <Separator orientation="VERTICAL" prefHeight="50"/>
+
+                    <VBox spacing="10" alignment="CENTER" styleClass="stats-card">
+                        <Label text="学生总数" styleClass="stats-label"/>
+                        <Label fx:id="totalStudentsLabel" text="0" styleClass="stats-number"/>
+                        <Label text="名学生" styleClass="stats-unit"/>
+                    </VBox>
+
+                    <Separator orientation="VERTICAL" prefHeight="50"/>
+
+                    <VBox spacing="10" alignment="CENTER" styleClass="stats-card">
+                        <Label text="教学质量" styleClass="stats-label"/>
+                        <Label text="优秀" styleClass="stats-number quality-excellent"/>
+                        <Label text="评价" styleClass="stats-unit"/>
+                    </VBox>
+                </HBox>
+
+                <!-- 操作按钮组 -->
+                <VBox spacing="12" alignment="CENTER">
+                    <Button text="刷新数据" onAction="#handleRefresh" styleClass="teacher-action-btn primary"/>
+                    <Button text="教学统计" styleClass="teacher-action-btn secondary"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- 主内容区域 - 直接显示课程管理，无标签页 -->
+    <center>
+        <SplitPane dividerPositions="0.55" styleClass="teacher-content-split">
+
+            <!-- 左侧：我的课程列表 -->
+            <VBox spacing="20" styleClass="courses-list-panel">
+                <padding>
+                    <Insets top="25" right="20" bottom="25" left="25"/>
+                </padding>
+
+                <Label text="我的授课课程" styleClass="panel-header"/>
+
+                <TableView fx:id="teacherCoursesTable"
+                           styleClass="teacher-courses-table"
+                           VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="courseIdCol" text="课程编号" prefWidth="90"/>
+                        <TableColumn fx:id="courseNameCol" text="课程名称" prefWidth="170"/>
+                        <TableColumn fx:id="creditsCol" text="学分" prefWidth="60"/>
+                        <TableColumn fx:id="scheduleCol" text="上课时间" prefWidth="130"/>
+                        <TableColumn fx:id="enrolledCol" text="已选" prefWidth="60"/>
+                        <TableColumn fx:id="capacityCol" text="容量" prefWidth="60"/>
+                        <TableColumn fx:id="statusCol" text="状态" prefWidth="80"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- 右侧：课程详情和学生列表 -->
+            <VBox spacing="25" styleClass="course-details-panel">
+                <padding>
+                    <Insets top="25" right="25" bottom="25" left="20"/>
+                </padding>
+
+                <!-- 选中课程详情面板 -->
+                <VBox fx:id="courseDetailsPanel"
+                      styleClass="selected-course-details"
+                      spacing="18"
+                      visible="false">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="课程详情" styleClass="details-section-title"/>
+
+                    <VBox spacing="12">
+                        <Label fx:id="selectedCourseLabel"
+                               text="请选择课程"
+                               styleClass="course-title"/>
+
+                        <HBox spacing="20" alignment="CENTER_LEFT">
+                            <VBox spacing="5">
+                                <Label text="课程类型" styleClass="detail-label"/>
+                                <Label fx:id="courseTypeLabel" text="必修课" styleClass="detail-value"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="开课院系" styleClass="detail-label"/>
+                                <Label fx:id="departmentLabel" text="计算机学院" styleClass="detail-value"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="教室" styleClass="detail-label"/>
+                                <Label fx:id="classroomLabel" text="A101" styleClass="detail-value"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="学期" styleClass="detail-label"/>
+                                <Label fx:id="semesterLabel" text="2025-1" styleClass="detail-value"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <VBox spacing="8">
+                        <Label text="课程描述" styleClass="detail-label"/>
+                        <TextArea fx:id="courseDescriptionArea"
+                                  prefRowCount="4"
+                                  editable="false"
+                                  wrapText="true"
+                                  styleClass="course-description-area"/>
+                    </VBox>
+                </VBox>
+
+                <!-- 选课学生列表 -->
+                <VBox spacing="15" VBox.vgrow="ALWAYS" styleClass="students-list-section">
+                    <HBox alignment="CENTER_LEFT" spacing="20">
+                        <Label text="选课学生名单" styleClass="details-section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="studentCountLabel" text="共 0 名学生" styleClass="student-count-label"/>
+                    </HBox>
+
+                    <TableView fx:id="studentsTable"
+                               styleClass="students-details-table"
+                               VBox.vgrow="ALWAYS"
+                               prefHeight="300">
+                        <columns>
+                            <TableColumn fx:id="studentIdCol" text="学号" prefWidth="110"/>
+                            <TableColumn fx:id="studentNameCol" text="姓名" prefWidth="90"/>
+                            <TableColumn fx:id="majorCol" text="专业" prefWidth="130"/>
+                            <TableColumn fx:id="gradeCol" text="年级" prefWidth="70"/>
+                        </columns>
+                        <!-- 空状态提示 -->
+                        <placeholder>
+                            <VBox spacing="10" alignment="CENTER">
+                                <Label text="暂无选课学生" styleClass="empty-placeholder"/>
+                                <Label text="请先选择课程查看学生名单" styleClass="empty-hint"/>
+                            </VBox>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,266 @@
+/* 空间时间表预约界面样式 */
+
+.schedule-root {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-padding: 20;
+    -fx-spacing: 15;
+}
+
+/* 顶部控制栏 */
+.schedule-top-bar {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-padding: 15 20;
+    -fx-spacing: 20;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.back-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.back-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* 日期控制 */
+.date-controls {
+    -fx-spacing: 15;
+}
+
+.nav-button {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #495057;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-padding: 8 12;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #e9ecef;
+    -fx-border-color: #adb5bd;
+}
+
+.current-date-label {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 8 15;
+}
+
+/* 搜索区域 */
+.search-area {
+    -fx-spacing: 8;
+}
+
+.search-field {
+    -fx-pref-width: 200;
+    -fx-padding: 8 12;
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.search-field:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2;
+}
+
+.search-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.search-button:hover {
+    -fx-background-color: #5a6268;
+}
+
+.quick-book-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 10 20;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+}
+
+.quick-book-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+/* 主要内容区域 */
+.schedule-main-content {
+    -fx-spacing: 0;
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);
+}
+
+/* 左侧空间列表 */
+.space-list-container {
+    -fx-pref-width: 200;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1 0 0;
+}
+
+.space-list-scroll {
+    -fx-background-color: transparent;
+}
+
+.space-list {
+    -fx-spacing: 2;
+    -fx-padding: 10;
+}
+
+.space-item {
+    -fx-background-color: white;
+    -fx-text-fill: #495057;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-padding: 12 16;
+    -fx-pref-width: 180;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+.space-item:hover {
+    -fx-background-color: #e9ecef;
+    -fx-border-color: #adb5bd;
+}
+
+.space-item.selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-border-color: #0056b3;
+}
+
+/* 时间表 */
+.time-table {
+    -fx-spacing: 0;
+    -fx-background-color: white;
+}
+
+.current-space-bar {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 15 20;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+.current-space-label {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.time-table-scroll {
+    -fx-background-color: transparent;
+}
+
+.time-slots {
+    -fx-spacing: 0;
+}
+
+/* 时间段样式 */
+.time-slot {
+    -fx-min-height: 50;
+    -fx-padding: 12 20;
+    -fx-border-color: #f1f3f4;
+    -fx-border-width: 0 0 1 0;
+}
+
+.time-slot.available {
+    -fx-background-color: white;
+}
+
+.time-slot.available:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-cursor: hand;
+}
+
+.time-slot.teaching {
+    -fx-background-color: #ffe6e6;
+    -fx-border-color: #ff6b6b;
+    -fx-border-width: 0 0 0 4;
+}
+
+.time-slot.student-reserved {
+    -fx-background-color: #e6f7ff;
+    -fx-border-color: #4ecdc4;
+    -fx-border-width: 0 0 0 4;
+}
+
+.time-slot.maintenance {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #95a5a6;
+    -fx-border-width: 0 0 0 4;
+}
+
+.time-label {
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-min-width: 60;
+}
+
+.slot-info {
+    -fx-font-size: 13;
+    -fx-text-fill: #6c757d;
+}
+
+.time-slot.teaching .slot-info {
+    -fx-text-fill: #c0392b;
+    -fx-font-weight: bold;
+}
+
+.time-slot.student-reserved .slot-info {
+    -fx-text-fill: #138496;
+}
+
+.time-slot.maintenance .slot-info {
+    -fx-text-fill: #6c757d;
+}
+
+/* 响应式调整 */
+.schedule-root .scroll-bar:vertical {
+    -fx-pref-width: 8;
+    -fx-opacity: 0.5;
+}
+
+.schedule-root .scroll-bar:vertical:hover {
+    -fx-opacity: 1;
+}
+
+.schedule-root .scroll-bar:horizontal {
+    -fx-pref-height: 8;
+    -fx-opacity: 0.5;
+}
+
+.schedule-root .scroll-bar:horizontal:hover {
+    -fx-opacity: 1;
+}

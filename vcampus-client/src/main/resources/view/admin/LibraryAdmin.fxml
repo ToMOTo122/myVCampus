@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.vcampus.client.controller.admin.LibraryAdminController"
+            prefHeight="900.0" prefWidth="1400.0"
+            style="-fx-background-color: linear-gradient(to bottom, #e3f2fd, #bbdefb);">
+
+    <!-- 顶部标题栏 -->
+    <top>
+        <VBox>
+            <!-- 主标题栏 -->
+            <HBox alignment="CENTER_LEFT" spacing="30" style="-fx-background-color: rgba(255,255,255,0.8); -fx-padding: 8 40;">
+                <Label text="📚 智能图书馆管理系统"
+                       style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="currentTimeLabel" text="2024-01-01 00:00:00"
+                       style="-fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: 500;"/>
+                <Button fx:id="syncAllButton" text="🔄 同步数据"
+                        style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 15; -fx-padding: 6 15;"/>
+            </HBox>
+
+            <!-- 快速统计横条 -->
+            <HBox spacing="40" alignment="CENTER" style="-fx-background-color: rgba(255,255,255,0.6); -fx-padding: 12 40;">
+                <VBox alignment="CENTER" spacing="5" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 15; -fx-min-width: 140; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                    <Label text="📚" style="-fx-text-fill: #2196f3; -fx-font-size: 24px;"/>
+                    <Label fx:id="totalBooksQuickLabel" text="150"
+                           style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label text="总图书数量" style="-fx-text-fill: black; -fx-font-size: 12px; -fx-font-weight: 600;"/>
+                </VBox>
+
+                <VBox alignment="CENTER" spacing="5" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 15; -fx-min-width: 140; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                    <Label text="📖" style="-fx-text-fill: #4caf50; -fx-font-size: 24px;"/>
+                    <Label fx:id="activeBorrowsQuickLabel" text="23"
+                           style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label text="当前借阅" style="-fx-text-fill: black; -fx-font-size: 12px; -fx-font-weight: 600;"/>
+                </VBox>
+
+                <VBox alignment="CENTER" spacing="5" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 15; -fx-min-width: 140; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                    <Label text="👥" style="-fx-text-fill: #ff9800; -fx-font-size: 24px;"/>
+                    <Label fx:id="activeUsersQuickLabel" text="45"
+                           style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label text="活跃用户" style="-fx-text-fill: black; -fx-font-size: 12px; -fx-font-weight: 600;"/>
+                </VBox>
+
+                <VBox alignment="CENTER" spacing="5" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 15; -fx-min-width: 140; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2); -fx-border-color: #f44336; -fx-border-radius: 15; -fx-border-width: 2;">
+                    <Label text="⚠️" style="-fx-text-fill: #f44336; -fx-font-size: 24px;"/>
+                    <Label fx:id="overdueQuickLabel" text="2"
+                           style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label text="逾期图书" style="-fx-text-fill: black; -fx-font-size: 12px; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- 主要内容区域 -->
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE"
+                 style="-fx-background-color: white; -fx-tab-min-height: 45px;">
+
+            <!-- 仪表盘标签页 -->
+            <Tab text="🏠 数据仪表盘" style="-fx-font-size: 14px; -fx-font-weight: bold;">
+                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                    <VBox spacing="30" style="-fx-padding: 30; -fx-background-color: #f5f5f5;">
+
+                        <!-- 核心数据展示卡片 -->
+                        <GridPane hgap="25" vgap="25">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0"/>
+                            </columnConstraints>
+
+                            <!-- 图书总数卡片 -->
+                            <VBox GridPane.columnIndex="0" spacing="12" alignment="CENTER"
+                                  style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                                <Label text="📚" style="-fx-font-size: 40px;"/>
+                                <Label fx:id="dashboardTotalBooksLabel" text="150"
+                                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: black;"/>
+                                <Label text="图书总数" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-font-weight: 600;"/>
+                                <Label fx:id="booksChangeLabel" text="较昨日 +5"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #4caf50; -fx-font-weight: bold; -fx-background-color: #e8f5e8; -fx-background-radius: 10; -fx-padding: 4 8;"/>
+                            </VBox>
+
+                            <!-- 当前借阅卡片 -->
+                            <VBox GridPane.columnIndex="1" spacing="12" alignment="CENTER"
+                                  style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                                <Label text="📖" style="-fx-font-size: 40px;"/>
+                                <Label fx:id="dashboardActiveBorrowsLabel" text="23"
+                                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: black;"/>
+                                <Label text="当前借阅" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-font-weight: 600;"/>
+                                <Label fx:id="borrowsChangeLabel" text="较昨日 +3"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #4caf50; -fx-font-weight: bold; -fx-background-color: #e8f5e8; -fx-background-radius: 10; -fx-padding: 4 8;"/>
+                            </VBox>
+
+                            <!-- 活跃用户卡片 -->
+                            <VBox GridPane.columnIndex="2" spacing="12" alignment="CENTER"
+                                  style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                                <Label text="👥" style="-fx-font-size: 40px;"/>
+                                <Label fx:id="dashboardActiveUsersLabel" text="45"
+                                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: black;"/>
+                                <Label text="活跃用户" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-font-weight: 600;"/>
+                                <Label fx:id="usersChangeLabel" text="较昨日 +8"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #4caf50; -fx-font-weight: bold; -fx-background-color: #e8f5e8; -fx-background-radius: 10; -fx-padding: 4 8;"/>
+                            </VBox>
+
+                            <!-- 系统警告卡片 -->
+                            <VBox GridPane.columnIndex="3" spacing="12" alignment="CENTER"
+                                  style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3); -fx-border-color: #f44336; -fx-border-radius: 15; -fx-border-width: 2;">
+                                <Label text="🚨" style="-fx-font-size: 40px;"/>
+                                <Label fx:id="dashboardAlertsLabel" text="2"
+                                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: black;"/>
+                                <Label text="系统警告" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-font-weight: 600;"/>
+                                <Label fx:id="alertsChangeLabel" text="需要处理"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #f44336; -fx-font-weight: bold; -fx-background-color: #ffebee; -fx-background-radius: 10; -fx-padding: 4 8;"/>
+                            </VBox>
+                        </GridPane>
+
+                        <!-- 详细信息面板 -->
+                        <HBox spacing="30" VBox.vgrow="ALWAYS">
+                            <!-- 实时活动面板 -->
+                            <VBox spacing="20" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label text="🔄" style="-fx-font-size: 24px;"/>
+                                    <Label text="实时活动监控" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: black;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Button text="查看更多" style="-fx-background-color: transparent; -fx-text-fill: #2196f3; -fx-font-size: 12px; -fx-font-weight: bold; -fx-underline: true;"/>
+                                </HBox>
+                                <ListView fx:id="recentActivitiesListView" prefHeight="250"
+                                          style="-fx-background-color: #f8f9fa; -fx-background-radius: 10; -fx-border-color: #e9ecef; -fx-border-radius: 10; -fx-border-width: 1; -fx-font-size: 13px;"/>
+                            </VBox>
+
+                            <!-- 系统通知面板 -->
+                            <VBox spacing="20" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label text="🔔" style="-fx-font-size: 24px;"/>
+                                    <Label text="系统通知中心" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: black;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Button text="全部已读" style="-fx-background-color: transparent; -fx-text-fill: #2196f3; -fx-font-size: 12px; -fx-font-weight: bold; -fx-underline: true;"/>
+                                </HBox>
+                                <ListView fx:id="systemNotificationsListView" prefHeight="250"
+                                          style="-fx-background-color: #f8f9fa; -fx-background-radius: 10; -fx-border-color: #e9ecef; -fx-border-radius: 10; -fx-border-width: 1; -fx-font-size: 13px;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- 图书管理标签页 -->
+            <Tab text="📚 图书管理中心" style="-fx-font-size: 14px; -fx-font-weight: bold;">
+                <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+                    <fx:include source="BookManagement.fxml"/>
+                </ScrollPane>
+            </Tab>
+
+            <!-- 借阅管理标签页 -->
+            <Tab text="📋 借阅管理中心" style="-fx-font-size: 14px; -fx-font-weight: bold;">
+                <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+                    <fx:include source="BorrowManagement.fxml"/>
+                </ScrollPane>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <!-- 底部状态栏 -->
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="25"
+              style="-fx-background-color: #f0f0f0; -fx-padding: 12 30; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+
+            <Label text="状态:" style="-fx-text-fill: black; -fx-font-size: 13px; -fx-font-weight: 600;"/>
+            <Label fx:id="systemStatusLabel" text="系统正常运行"
+                   style="-fx-text-fill: black; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="版本:" style="-fx-text-fill: black; -fx-font-size: 13px; -fx-font-weight: 600;"/>
+            <Label text="v2.0.1" style="-fx-text-fill: black; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+            <Label text="在线用户:" style="-fx-text-fill: black; -fx-font-size: 13px; -fx-font-weight: 600;"/>
+            <Label fx:id="onlineUsersLabel" text="1"
+                   style="-fx-text-fill: black; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+            <Label text="系统负载:" style="-fx-text-fill: black; -fx-font-size: 13px; -fx-font-weight: 600;"/>
+            <ProgressBar fx:id="systemLoadBar" progress="0.3" prefWidth="100"
+                         style="-fx-accent: #2196f3;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

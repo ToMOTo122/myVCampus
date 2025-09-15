@@ -1,0 +1,272 @@
+/* 文件路径: vcampus-client/src/main/resources/css/library.css */
+
+/* 基础样式 */
+.root {
+    -fx-font-family: "Microsoft YaHei", "SimHei", sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* 主容器 */
+.main-container {
+    -fx-background-color: linear-gradient(to bottom, #f8fafc, #e2e8f0);
+}
+
+/* 头部样式 */
+.header-container {
+    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+
+.header-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.header-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(0,0,0,0.8);
+}
+
+/* Tab样式 */
+.tab-container .tab {
+    -fx-background-color: rgba(255,255,255,0.8);
+    -fx-background-radius: 10 10 0 0;
+    -fx-padding: 12 20;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.tab-container .tab:selected {
+    -fx-background-color: white;
+    -fx-text-base-color: #667eea;
+}
+
+/* 内容区域 */
+.tab-content-vbox, .tab-content-hbox {
+    -fx-background-color: white;
+    -fx-background-radius: 0 15 15 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+/* 搜索框 */
+.search-container {
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+}
+
+.search-input {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 20;
+    -fx-border-width: 2;
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+}
+
+.search-input:focused {
+    -fx-border-color: #667eea;
+}
+
+/* 按钮样式 */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom, #667eea, #5a67d8);
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-padding: 10 20;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom, #5a67d8, #4c51bf);
+}
+
+.btn-secondary {
+    -fx-background-color: #f7fafc;
+    -fx-text-fill: #4a5568;
+    -fx-background-radius: 20;
+    -fx-padding: 10 20;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 20;
+    -fx-border-width: 2;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #edf2f7;
+}
+
+/* 统计卡片 */
+.stats-grid {
+    -fx-hgap: 15;
+    -fx-vgap: 15;
+}
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-padding: 20;
+    -fx-alignment: center;
+    -fx-spacing: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 15;
+    -fx-border-width: 1;
+}
+
+.stat-number {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #667eea;
+}
+
+.stat-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #718096;
+    -fx-font-weight: bold;
+}
+
+/* 表格样式 */
+.custom-table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.custom-table-view .column-header-background {
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 12 12 0 0;
+}
+
+.custom-table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4a5568;
+    -fx-font-size: 14px;
+    -fx-padding: 12 8;
+}
+
+.custom-table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-padding: 8 0;
+}
+
+.custom-table-view .table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+.custom-table-view .table-row-cell:selected {
+    -fx-background-color: rgba(102,126,234,0.1);
+}
+
+/* 标题样式 */
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3748;
+}
+
+.section-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #718096;
+}
+
+/* 活动相关样式 */
+.activity-sidebar {
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 12;
+    -fx-padding: 15;
+}
+
+.activity-list-view {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+}
+
+.activity-list-view .list-cell {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+    -fx-margin: 3;
+    -fx-text-fill: #4a5568;
+    -fx-font-size: 14px;
+}
+
+.activity-list-view .list-cell:selected {
+    -fx-background-color: #667eea;
+    -fx-text-fill: white;
+}
+
+.activity-detail-container {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 25;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.activity-detail-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3748;
+}
+
+.activity-meta-container {
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 10;
+    -fx-padding: 15;
+}
+
+.activity-meta-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4a5568;
+}
+
+.activity-content {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4a5568;
+    -fx-line-spacing: 3;
+}
+
+/* 文献查阅样式 */
+.literature-header-container {
+    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+}
+
+.literature-header-container .section-title {
+    -fx-text-fill: white;
+}
+
+.literature-header-container .section-subtitle {
+    -fx-text-fill: rgba(255,255,255,0.9);
+}
+
+/* 滚动条美化 */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #cbd5e0;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #a0aec0;
+}

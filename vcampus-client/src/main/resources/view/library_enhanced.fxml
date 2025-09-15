@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<VBox fx:controller="com.vcampus.client.controller.BookListController"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="mainVBox"
+      stylesheets="@../css/library.css"
+      styleClass="main-container">
+
+    <!-- 现代化页面头部 -->
+    <VBox alignment="CENTER" styleClass="header-container">
+        <HBox alignment="CENTER" spacing="15">
+            <!-- 图书馆图标 -->
+            <Label text="📚" style="-fx-font-size: 48px;"/>
+            <VBox alignment="CENTER_LEFT">
+                <Label text="VCampus 智慧图书馆" styleClass="header-title" />
+                <Label text="探索知识的海洋，开启学习的旅程" styleClass="header-subtitle" />
+            </VBox>
+        </HBox>
+
+        <!-- 快速导航栏 -->
+        <HBox alignment="CENTER" spacing="30" style="-fx-padding: 20 0 0 0;">
+            <Button text="📖 快速借阅" styleClass="btn-primary"
+                    onAction="#handleQuickBorrow" />
+            <Button text="🔄 我的借阅" styleClass="btn-secondary"
+                    onAction="#switchToBorrowTab" />
+            <Button text="🎯 热门活动" styleClass="btn-secondary"
+                    onAction="#switchToActivityTab" />
+            <Button text="🔍 学术搜索" styleClass="btn-secondary"
+                    onAction="#switchToLiteratureTab" />
+        </HBox>
+    </VBox>
+
+    <!-- 主要内容区域 -->
+    <TabPane fx:id="libraryTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" styleClass="tab-container">
+
+        <!-- 图书借阅 Tab -->
+        <Tab text="📖 图书借阅">
+            <VBox spacing="25.0" styleClass="tab-content-vbox">
+                <padding>
+                    <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                </padding>
+
+                <!-- 增强的搜索区域 -->
+                <VBox spacing="15" styleClass="search-container">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="🔍" style="-fx-font-size: 20px;"/>
+                        <Label text="智能搜索" styleClass="section-title" style="-fx-font-size: 18px;"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <TextField fx:id="searchField" promptText="请输入书名、作者、ISBN或关键词进行搜索..."
+                                   styleClass="search-input" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="searchButton" text="🔍 搜索图书" styleClass="btn-primary" />
+                        <Button fx:id="refreshButton" text="🔄 刷新列表" styleClass="btn-secondary" />
+                        <Button text="📊 高级搜索" styleClass="btn-secondary" onAction="#handleAdvancedSearch" />
+                    </HBox>
+
+                    <!-- 热门搜索标签 -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="热门搜索：" style="-fx-text-fill: #718096; -fx-font-size: 12px;"/>
+                        <Button text="人工智能" styleClass="tag-button" onAction="#handleTagSearch"/>
+                        <Button text="数据结构" styleClass="tag-button" onAction="#handleTagSearch"/>
+                        <Button text="机器学习" styleClass="tag-button" onAction="#handleTagSearch"/>
+                        <Button text="算法设计" styleClass="tag-button" onAction="#handleTagSearch"/>
+                        <Button text="深度学习" styleClass="tag-button" onAction="#handleTagSearch"/>
+                    </HBox>
+                </VBox>
+
+                <!-- 美化的统计信息卡片 -->
+                <VBox spacing="10">
+                    <Label text="📊 图书馆概览" styleClass="section-title"/>
+                    <GridPane fx:id="statsGrid" hgap="20" vgap="20" styleClass="stats-grid">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                        </columnConstraints>
+
+                        <VBox styleClass="stat-card" GridPane.columnIndex="0">
+                            <Label text="📚" style="-fx-font-size: 24px;"/>
+                            <Label fx:id="totalBooksLabel" styleClass="stat-number" text="0" />
+                            <Label styleClass="stat-label" text="馆藏图书" />
+                        </VBox>
+                        <VBox styleClass="stat-card" GridPane.columnIndex="1">
+                            <Label text="✅" style="-fx-font-size: 24px;"/>
+                            <Label fx:id="availableBooksLabel" styleClass="stat-number" text="0" />
+                            <Label styleClass="stat-label" text="可借图书" />
+                        </VBox>
+                        <VBox styleClass="stat-card" GridPane.columnIndex="2">
+                            <Label text="📖" style="-fx-font-size: 24px;"/>
+                            <Label fx:id="borrowedBooksLabel" styleClass="stat-number" text="0" />
+                            <Label styleClass="stat-label" text="已借出" />
+                        </VBox>
+                        <VBox styleClass="stat-card" GridPane.columnIndex="3">
+                            <Label text="🆕" style="-fx-font-size: 24px;"/>
+                            <Label fx:id="newBooksLabel" styleClass="stat-number" text="0" />
+                            <Label styleClass="stat-label" text="本月新增" />
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- 增强的图书列表表格 -->
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="📋 图书列表" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="resultCountLabel" text="共 0 本图书"
+                               style="-fx-text-fill: #718096; -fx-font-size: 14px;"/>
+                        <ComboBox fx:id="sortComboBox" promptText="排序方式">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="默认排序"/>
+                                    <String fx:value="按书名排序"/>
+                                    <String fx:value="按作者排序"/>
+                                    <String fx:value="按出版社排序"/>
+                                    <String fx:value="按库存排序"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </HBox>
+
+                    <TableView fx:id="booksTableView" VBox.vgrow="ALWAYS" styleClass="custom-table-view">
+                        <columns>
+                            <TableColumn fx:id="bookIdCol" prefWidth="100.0" text="图书编号" />
+                            <TableColumn fx:id="titleCol" prefWidth="300.0" text="书名" />
+                            <TableColumn fx:id="authorCol" prefWidth="150.0" text="作者" />
+                            <TableColumn fx:id="publisherCol" prefWidth="150.0" text="出版社" />
+                            <TableColumn fx:id="statusCol" prefWidth="100.0" text="状态" />
+                            <TableColumn fx:id="stockCol" prefWidth="80.0" text="库存" />
+                            <TableColumn fx:id="actionCol" prefWidth="180.0" text="操作" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </Tab>
+
+        <!-- 个人借阅 Tab -->
+        <Tab text="📋 我的借阅">
+            <VBox spacing="25" styleClass="tab-content-vbox">
+                <padding>
+                    <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                </padding>
+
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label text="👤" style="-fx-font-size: 24px;"/>
+                    <Label styleClass="section-title" text="我的借阅记录" />
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="📧 借阅提醒" styleClass="btn-secondary" onAction="#handleBorrowReminder"/>
+                    <Button text="📊 借阅报告" styleClass="btn-secondary" onAction="#handleBorrowReport"/>
+                </HBox>
+
+                <!-- 借阅统计信息 -->
+                <VBox spacing="10">
+                    <Label text="📈 借阅统计" styleClass="section-title"/>
+                    <GridPane hgap="20" vgap="20" styleClass="stats-grid">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                        </columnConstraints>
+
+                        <VBox styleClass="stat-card" GridPane.columnIndex="0">
+                            <Label text="📖" style="-fx-font-size: 24px;"/>
+                            <Label fx:id="currentBorrowLabel" styleClass="stat-number" text="0" />
+                            <Label styleClass="stat-label" text="当前借阅" />
+                        </VBox>
+                        <VBox styleClass="stat-card" GridPane.columnIndex="1">
+                            <Label text="📚" style="-fx-font-size: 24px;"/>
+                            <Label fx:id="historyBorrowLabel" styleClass="stat-number" text="0" />
+                            <Label styleClass="stat-label" text="历史借阅" />
+                        </VBox>
+                        <VBox styleClass="stat-card" GridPane.columnIndex="2">
+                            <Label text="⏰" style="-fx-font-size: 24px;"/>
+                            <Label fx:id="expiringBooksLabel" styleClass="stat-number" text="0" />
+                            <Label styleClass="stat-label" text="即将到期" />
+                        </VBox>
+                        <VBox styleClass="stat-card" GridPane.columnIndex="3">
+                            <Label text="⚠️" style="-fx-font-size: 24px;"/>
+                            <Label fx:id="overdueBooksLabel" styleClass="stat-number" text="0" />
+                            <Label styleClass="stat-label" text="逾期图书" />
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- 借阅记录表格 -->
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="📋 借阅记录" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="borrowFilterComboBox" promptText="筛选状态">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="全部记录"/>
+                                    <String fx:value="当前借阅"/>
+                                    <String fx:value="已归还"/>
+                                    <String fx:value="逾期图书"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </HBox>
+
+                    <TableView fx:id="borrowHistoryTable" VBox.vgrow="ALWAYS" styleClass="custom-table-view">
+                        <columns>
+                            <TableColumn fx:id="borrowIdCol" prefWidth="100.0" text="借阅编号" />
+                            <TableColumn fx:id="borrowTitleCol" prefWidth="300.0" text="书名" />
+                            <TableColumn fx:id="borrowDateCol" prefWidth="150.0" text="借阅日期" />
+                            <TableColumn fx:id="returnDateCol" prefWidth="150.0" text="应还日期" />
+                            <TableColumn fx:id="borrowStatusCol" prefWidth="100.0" text="状态" />
+                            <TableColumn fx:id="borrowActionCol" prefWidth="200.0" text="操作" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </Tab>
+
+        <!-- 文献查阅 Tab -->
+        <Tab text="🔍 文献查阅">
+            <VBox styleClass="tab-content-vbox">
+                <padding>
+                    <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                </padding>
+
+                <!-- 现代化文献查阅头部 -->
+                <VBox spacing="20" styleClass="literature-header-container">
+                    <HBox alignment="CENTER_LEFT" spacing="20">
+                        <Label text="🎓" style="-fx-font-size: 32px;"/>
+                        <VBox spacing="5">
+                            <Label styleClass="section-title" text="学术资源库" />
+                            <Label styleClass="section-subtitle" text="探索前沿学术文献，助力您的研究之路" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <VBox alignment="CENTER_RIGHT" spacing="5">
+                            <Label text="数据库覆盖" style="-fx-text-fill: rgba(255,255,255,0.9); -fx-font-size: 12px;"/>
+                            <HBox spacing="10">
+                                <Label text="CNKI" style="-fx-background-color: rgba(255,255,255,0.2); -fx-background-radius: 10; -fx-padding: 3 8; -fx-text-fill: white; -fx-font-size: 11px;"/>
+                                <Label text="Web of Science" style="-fx-background-color: rgba(255,255,255,0.2); -fx-background-radius: 10; -fx-padding: 3 8; -fx-text-fill: white; -fx-font-size: 11px;"/>
+                                <Label text="IEEE" style="-fx-background-color: rgba(255,255,255,0.2); -fx-background-radius: 10; -fx-padding: 3 8; -fx-text-fill: white; -fx-font-size: 11px;"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <!-- 高级搜索栏 -->
+                    <VBox spacing="15">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <TextField fx:id="literatureSearchField" promptText="请输入文献标题、作者、关键词..."
+                                       styleClass="search-input" prefWidth="500" HBox.hgrow="ALWAYS" />
+                            <Button fx:id="literatureSearchButton" text="🔍 搜索文献" styleClass="btn-primary" />
+                            <Button text="🎯 高级检索" styleClass="btn-secondary" onAction="#handleAdvancedLiteratureSearch"/>
+                        </HBox>
+
+                        <!-- 搜索过滤器 -->
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="筛选：" style="-fx-text-fill: rgba(255,255,255,0.9); -fx-font-size: 14px;"/>
+                            <ComboBox fx:id="categoryComboBox" promptText="学科分类" styleClass="filter-combo">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="全部分类"/>
+                                        <String fx:value="人工智能"/>
+                                        <String fx:value="生物医学"/>
+                                        <String fx:value="环境科学"/>
+                                        <String fx:value="材料科学"/>
+                                        <String fx:value="经济学"/>
+                                        <String fx:value="心理学"/>
+                                        <String fx:value="物理学"/>
+                                        <String fx:value="教育学"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                            <ComboBox fx:id="yearComboBox" promptText="发表年份" styleClass="filter-combo">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="全部年份"/>
+                                        <String fx:value="2024年"/>
+                                        <String fx:value="2023年"/>
+                                        <String fx:value="2022年"/>
+                                        <String fx:value="2021年"/>
+                                        <String fx:value="2020年及以前"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                            <ComboBox fx:id="sortLiteratureComboBox" promptText="排序方式" styleClass="filter-combo">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="相关度排序"/>
+                                        <String fx:value="发表时间"/>
+                                        <String fx:value="被引次数"/>
+                                        <String fx:value="下载次数"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- 文献列表 -->
+                <VBox spacing="15" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="📑 检索结果" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="literatureCountLabel" text="共 0 篇文献"
+                               style="-fx-text-fill: #718096; -fx-font-size: 14px;"/>
+                        <Button text="📥 批量下载" styleClass="btn-secondary" onAction="#handleBatchDownload"/>
+                        <Button text="📊 引文分析" styleClass="btn-secondary" onAction="#handleCitationAnalysis"/>
+                    </HBox>
+
+                    <TableView fx:id="literatureTableView" VBox.vgrow="ALWAYS" styleClass="custom-table-view">
+                        <columns>
+                            <TableColumn fx:id="literatureTitleCol" prefWidth="350.0" text="标题" />
+                            <TableColumn fx:id="literatureAuthorCol" prefWidth="150.0" text="作者" />
+                            <TableColumn fx:id="literatureSourceCol" prefWidth="150.0" text="来源" />
+                            <TableColumn fx:id="literaturePublishDateCol" prefWidth="120.0" text="发布日期" />
+                            <TableColumn fx:id="literatureCitationCol" prefWidth="80.0" text="被引" />
+                            <TableColumn fx:id="literatureDownloadCol" prefWidth="80.0" text="下载" />
+                            <TableColumn fx:id="literatureActionCol" prefWidth="220.0" text="操作" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </Tab>
+
+        <!-- 图书馆活动 Tab -->
+        <Tab text="🎯 图书馆活动">
+            <HBox spacing="30.0" styleClass="tab-content-hbox">
+                <padding>
+                    <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                </padding>
+
+                <!-- 左侧活动列表 -->
+                <VBox spacing="20" HBox.hgrow="SOMETIMES" styleClass="activity-sidebar" maxWidth="350" minWidth="320">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="🎯" style="-fx-font-size: 24px;"/>
+                        <Label styleClass="section-title" text="精彩活动" />
+                    </HBox>
+
+                    <!-- 活动筛选 -->
+                    <HBox spacing="10">
+                        <ComboBox fx:id="activityFilterComboBox" promptText="活动类型" HBox.hgrow="ALWAYS">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="全部活动"/>
+                                    <String fx:value="学术讲座"/>
+                                    <String fx:value="技能培训"/>
+                                    <String fx:value="读书活动"/>
+                                    <String fx:value="图书展览"/>
+                                    <String fx:value="知识竞赛"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                        <Button text="🔄" styleClass="btn-secondary" onAction="#refreshActivities"/>
+                    </HBox>
+
+                    <ListView fx:id="activityListView" VBox.vgrow="ALWAYS" styleClass="activity-list-view" />
+
+                    <!-- 活动统计 -->
+                    <VBox spacing="10" styleClass="activity-stats">
+                        <Label text="📊 活动统计" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <VBox alignment="CENTER" spacing="2">
+                                <Label text="5" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #667eea;"/>
+                                <Label text="进行中" style="-fx-font-size: 11px; -fx-text-fill: #718096;"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="2">
+                                <Label text="156" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #48bb78;"/>
+                                <Label text="已报名" style="-fx-font-size: 11px; -fx-text-fill: #718096;"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="2">
+                                <Label text="12" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ed8936;"/>
+                                <Label text="本月新增" style="-fx-font-size: 11px; -fx-text-fill: #718096;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- 右侧活动详情 -->
+                <VBox spacing="25" HBox.hgrow="ALWAYS" styleClass="activity-detail-container">
+                    <!-- 活动标题和状态 -->
+                    <VBox spacing="15">
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Label fx:id="activityTitleLabel" styleClass="activity-detail-title"
+                                   text="请从左侧选择一个活动查看详情" wrapText="true" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="activityStatusBadge" text="报名中"
+                                   style="-fx-background-color: #48bb78; -fx-text-fill: white; -fx-background-radius: 12; -fx-padding: 5 12; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        </HBox>
+
+                        <!-- 活动简介 -->
+                        <Label fx:id="activityDescriptionLabel" wrapText="true"
+                               style="-fx-text-fill: #718096; -fx-font-size: 14px; -fx-font-style: italic;"/>
+                    </VBox>
+
+                    <!-- 活动基本信息 -->
+                    <VBox spacing="15" styleClass="activity-meta-container">
+                        <Label text="📋 活动信息" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+
+                        <GridPane hgap="20" vgap="12">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                            </columnConstraints>
+
+                            <HBox alignment="CENTER_LEFT" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="📅" styleClass="icon-label" />
+                                <Label fx:id="activityDateLabel" styleClass="activity-meta-label" text="活动时间" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="📍" styleClass="icon-label" />
+                                <Label fx:id="activityLocationLabel" styleClass="activity-meta-label" text="活动地点" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="👤" styleClass="icon-label" />
+                                <Label fx:id="activityOrganizerLabel" styleClass="activity-meta-label" text="主办方" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <Label text="🎤" styleClass="icon-label" />
+                                <Label fx:id="activitySpeakerLabel" styleClass="activity-meta-label" text="主讲人" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <Label text="👥" styleClass="icon-label" />
+                                <Label fx:id="activityParticipantsLabel" styleClass="activity-meta-label" text="参与人数" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <Label text="🏷️" styleClass="icon-label" />
+                                <Label fx:id="activityCategoryLabel" styleClass="activity-meta-label" text="活动类别" />
+                            </HBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- 活动详细内容 -->
+                    <VBox spacing="10" VBox.vgrow="ALWAYS">
+                        <Label text="📖 活动详情" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="activity-scroll-pane">
+                            <VBox spacing="15">
+                                <Text fx:id="activityContentText" styleClass="activity-content"
+                                      wrappingWidth="550" text="活动详细内容将在这里显示..." />
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+
+                    <!-- 操作按钮区域 -->
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Button fx:id="activityRegisterButton" text="🎉 立即报名" styleClass="btn-primary" />
+                        <Button text="📤 分享活动" styleClass="btn-secondary" onAction="#handleShareActivity"/>
+                        <Button text="📅 添加日历" styleClass="btn-secondary" onAction="#handleAddToCalendar"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="💡 提示：活动开始前1天将发送提醒通知"
+                               style="-fx-text-fill: #718096; -fx-font-size: 12px; -fx-font-style: italic;"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+        </Tab>
+
+    </TabPane>
+</VBox>
